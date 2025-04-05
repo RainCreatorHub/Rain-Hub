@@ -12,4 +12,20 @@ Window:AddMinimizeButton({
 })
 
 local Main = Window:MakeTab({"Main", "Home"})
+
+Local MeleeList = ({
+  "Combate"
+}}
+
+local Dropdown = Tab:AddDropdown({
+  Name = "Fight mode",
+  Description = "selecione o modo de combate",
+  Options = {"Melee", "Blox Fruit", "Sword"},
+  Default = "Melee",
+  Flag = "Modo de Combate Flag",
+  Callback = function(Value)
+    
+  end
+})
+
 local FarmSection = Main:AddSection({"Farm"})
