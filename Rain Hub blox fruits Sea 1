@@ -1,5 +1,6 @@
 local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))()
 
+-- Criar Janela
 local Window = redzlib:MakeWindow({
   Title = "Rain hub : Blox Fruits",
   SubTitle = "by Rain Creator",
@@ -8,21 +9,18 @@ local Window = redzlib:MakeWindow({
 
 Window:AddMinimizeButton({
     Button = { Image = "rbxassetid://71014873973869", BackgroundTransparency = 0 },
-    Corner = { CornerRadius = UDim.new(0, 0) },
+    Corner = { CornerRadius = UDim.new(2, 1) },
 })
 
 local Main = Window:MakeTab({"Main", "Home"})
 
-Local MeleeList = ({
-  "Combate"
-}}
-
-local Dropdown = Tab:AddDropdown({
+local MeleeList
+local Dropdown = Main:AddDropdown({
   Name = "Fight mode",
   Description = "selecione o modo de combate",
   Options = {"Melee", "Blox Fruit", "Sword"},
   Default = "Melee",
-  Flag = "Modo de Combate Flag",
+  Flag = "FightMode",
   Callback = function(Value)
     
   end
