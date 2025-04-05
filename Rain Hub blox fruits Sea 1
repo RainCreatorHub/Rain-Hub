@@ -3,7 +3,7 @@ local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao1
 local Window = redzlib:MakeWindow({
   Title = "Rain hub : Blox Fruits",
   SubTitle = "by Rain Creator",
-  SaveFolder = "RainHubBloxfruits"
+  SaveFolder = "Rain blox"
 })
 
 Window:AddMinimizeButton({
