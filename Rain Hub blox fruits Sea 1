@@ -1,0 +1,15 @@
+local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))()
+
+local Window = redzlib:MakeWindow({
+  Title = "Rain hub : Blox Fruits",
+  SubTitle = "by Rain Creator",
+  SaveFolder = "RainHubBloxfruits"
+})
+
+Window:AddMinimizeButton({
+    Button = { Image = "rbxassetid://71014873973869", BackgroundTransparency = 0 },
+    Corner = { CornerRadius = UDim.new(0, 0) },
+})
+
+local Main = Window:MakeTab({"Main", "Home"})
+local FarmSection = Main:AddSection({"Farm"})
