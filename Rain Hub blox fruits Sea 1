@@ -29,3 +29,15 @@ local Dropdown = Tab:AddDropdown({
 })
 
 local FarmSection = Main:AddSection({"Farm"})
+local Toggle = Main:AddToggle({
+    Name = "Farm Level",
+    Default = false,
+    Flag = "FarmLevel",
+    Callback = function(value)
+        if value then
+            print("Toggle foi ativado!")
+        else
+            print("Toggle foi desativado!")
+        end
+    end
+})
