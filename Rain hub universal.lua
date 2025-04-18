@@ -16,7 +16,7 @@ local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao1
 local Window = redzlib:MakeWindow({
     Title = "Rain Hub | Universal",
     SubTitle = "by Rain Creator",
-    SaveFolder = "Dragon_Hub_universal.json"
+    SaveFolder = "Rain_Hub_universal.json"
 })
 
 Window:AddMinimizeButton({
@@ -323,6 +323,7 @@ local EspSection = Tabs.Esp:AddSection({"esp"})
 local EspPlayerToggle = Tabs.Esp:AddToggle({
     Name = "Player",
     Default = false,
+    Flag = "Player",
     Callback = function(state) 
         if state then 
             ativarESPPlayer() 
@@ -335,8 +336,9 @@ local EspPlayerToggle = Tabs.Esp:AddToggle({
     end 
 })
 local EspHealthBarToggle = Tabs.Esp:AddToggle({
-    Name = "HealthBar",
+    Name = "Health Bar",
     Default = false,
+    Flag = "Health Bar",
     Callback = function(state) 
         if state then 
             ativarESPHealthBar() 
@@ -348,6 +350,7 @@ local EspHealthBarToggle = Tabs.Esp:AddToggle({
 local EspLineToggle = Tabs.Esp:AddToggle({
     Name = "Line",
     Default = false,
+    Flag = "Line",
     Callback = function(state) 
         if state then 
             ativarESPLine() 
@@ -359,6 +362,7 @@ local EspLineToggle = Tabs.Esp:AddToggle({
 local EspHitboxToggle = Tabs.Esp:AddToggle({
     Name = "Hitbox",
     Default = false,
+    Flag = "Hitbox",
     Callback = function(state) 
         if state then 
             ativarESPHitbox() 
@@ -373,6 +377,7 @@ local CombateSection = Tabs.Combate:AddSection({"Aim"})
 local AimbotToggle = Tabs.Combate:AddToggle({
     Name = "Aimbot",
     Default = false,
+    Flag = "Aimbot",
     Callback = function(state) 
         if state then 
             ativarAimbot() 
@@ -384,6 +389,7 @@ local AimbotToggle = Tabs.Combate:AddToggle({
 local HeadToggle = Tabs.Combate:AddToggle({
     Name = "Head",
     Default = false,
+    Flag = "Head",
     Callback = function(state) 
         mirarNaCabecaAtivo = state 
     end 
@@ -394,13 +400,15 @@ local SettingsSection = Tabs.Settings:AddSection({"settings"})
 local TeamCheckToggle = Tabs.Settings:AddToggle({
     Name = "Team Check Aimbot",
     Default = true,
+    Flag = "Team Check Aimbot",
     Callback = function(state) 
         teamCheckAtivo = state 
     end 
 })
 local TeamCheckEspPlayerToggle = Tabs.Settings:AddToggle({
-    Name = "Team Check Esp player",
+    Name = "Team Check player",
     Default = true,
+    Flag = "Team Check player",
     Callback = function(state) 
         espTeamCheckAtivo = state 
         if espAtivo then
