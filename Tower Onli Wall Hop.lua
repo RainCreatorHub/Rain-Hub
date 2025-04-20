@@ -18,7 +18,9 @@ function TeleportTo(position)
     if getgenv().TeleportMode == "Teleport" then
         root.CFrame = CFrame.new(position)
     elseif getgenv().TeleportMode == "Tween" then
-        local tween = TweenService:Create(root, TweenInfo.new(1), {CFrame = CFrame.new(position)})
+        local speed = redzlib.Flags["Tween Speed"] or 100
+        local tweenTime = 5 / (speed / 20)
+        local tween = TweenService:Create(root, TweenInfo.new(tweenTime), {CFrame = CFrame.new(position)})
         tween:Play()
     end
 end
@@ -142,7 +144,7 @@ MainTab:AddButton({
 
 -- Settings Tab
 local SettingsTab = Window:MakeTab({"Settings", "Settings"})
-local SettingsSection = SettingsTab:AddSection({"Settings"})
+local SettingsSection = SettingsTab:AddSection({"Settings Teleport"})
 
 SettingsTab:AddDropdown({
     Name = "Teleport Mode",
@@ -153,5 +155,17 @@ SettingsTab:AddDropdown({
     Callback = function(Value)
         getgenv().TeleportMode = Value
         print("Modo de teleporte selecionado:", Value)
+    end
+})
+
+SettingsTab:AddSlider({
+    Name = "Tween Speed",
+    Min = 1,
+    Max = 350,
+    Increase = 1,
+    Default = 100,
+    Flag = "Tween Speed",
+    Callback = function(Value)
+        print("Valor do Slider: " .. Value)
     end
 })
