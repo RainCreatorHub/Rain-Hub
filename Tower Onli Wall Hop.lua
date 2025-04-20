@@ -14,8 +14,13 @@ Window:AddMinimizeButton({
 
 -- Criar Abas
 local InfoTab = Window:MakeTab({"Info", "Info"})
-local MainTab = Window:MakeTab({"Main", "Home"})
+local InfoSection = InfoTab:AddSection({"Info"})
 
+local playerName = game.Players.LocalPlayer.Name
+local Paragraph = InfoTab:AddParagraph({"seja bem-vindo(a)" .. playerName .. " ao Rain hub!", ""})
+
+
+local MainTab = Window:MakeTab({"Main", "Home"})
 local SwordSection = MainTab:AddSection({"Sword"})
 
 MainTab:AddButton({
