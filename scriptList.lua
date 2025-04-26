@@ -1,6 +1,6 @@
 local Games = {
   [83325092812472] = "https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Tower%20Onli%20Wall%20Hop.lua", -- tower onli wall hop
-  [14451515684] = "https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/peta%20peta.lua" -- peta peta 
+  [] = "https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Just%20a%20Baseplate%20script.lua" -- Just a Baseplate
 }
 
 return Games
