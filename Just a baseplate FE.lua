@@ -12,22 +12,12 @@ local accessoriesToModify = {
     "VANS_Umbrella"
 }
 
--- Função para tornar o personagem não colidível
-local function setPlayerNonCollidable(character)
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = false
-        end
-    end
-end
-
 -- Função para modificar acessórios
 local function modifyAccessories()
     local character = LocalPlayer.Character
     if not character then return end
 
-    -- Torna o personagem não colidível
-    setPlayerNonCollidable(character)
+    local head = character:FindFirstChild("Head") -- Referência à cabeça
 
     -- Percorre todos os acessórios na lista
     for _, accessoryName in ipairs(accessoriesToModify) do
@@ -44,11 +34,28 @@ local function modifyAccessories()
                     print("Nenhuma malha encontrada em: " .. accessoryName)
                 end
 
-                -- Ativa a colisão estática
-                handle.CanCollide = true
-                handle.Anchored = true -- Sem física, permanece estático
+                -- Desativa a colisão
+                handle.CanCollide = false
+                handle.Anchored = false -- Não ancorado, segue o weld
 
-                print("Colisão estática ativada em: " .. accessoryName)
+                -- Ajusta o VANS_Umbrella para ficar acima da cabeça
+                if accessoryName == "VANS_Umbrella" and head then
+                    -- Remove o weld existente
+                    local weld = handle:FindFirstChildWhichIsA("Weld") or handle:FindFirstChildWhichIsA("WeldConstraint")
+                    if weld then
+                        weld:Destroy()
+                    end
+
+                    -- Cria um novo weld para posicionar acima da cabeça
+                    local newWeld = Instance.new("Weld")
+                    newWeld.Part0 = head
+                    newWeld.Part1 = handle
+                    newWeld.C0 = CFrame.new(0, 2, 0) -- 2 studs acima da cabeça
+                    newWeld.Parent = handle
+                    print("VANS_Umbrella posicionado acima da cabeça")
+                end
+
+                print("Configurado para seguir o LocalPlayer: " .. accessoryName)
             else
                 print("Handle não encontrado em: " .. accessoryName)
             end
