@@ -26,7 +26,7 @@ end
 -- Messages to send
 local customMessage = "-gh 63690008 62234425 48474313 62724852 451220849 48474294 9350274205"
 local netMessage = "-net"
-local madeByzaqueMessage = "Made by zaque_blox"
+local madeByzaqueMessage = "Mano isso que eu criei é FE?"
 
 -- Send the first message immediately
 SendChatMessage(customMessage)
@@ -44,4 +44,4 @@ task.wait(0.2)
 SendChatMessage(madeByzaqueMessage)
 
 -- Loadstring for the Script (executed after sending messages)
-loadstring(game:HttpGet(''))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Just%20a%20baseplate%20FE.lua'))()
