@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
 local function setupAccessory(accessory, customWeld, initialOffset)
@@ -14,7 +15,7 @@ local function setupAccessory(accessory, customWeld, initialOffset)
         return
     end
 
-    -- Remove mesh
+    -- Remover mesh
     local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
     if mesh then
         mesh:Destroy()
@@ -23,13 +24,13 @@ local function setupAccessory(accessory, customWeld, initialOffset)
         warn("No mesh found in: " .. accessory.Name)
     end
 
-    -- Set handle properties to ensure persistence
+    -- Configurar propriedades do handle
     handle.CanCollide = false
     handle.Anchored = false
     handle.CanTouch = true
     handle.Locked = true
 
-    -- Apply custom weld if provided
+    -- Aplicar weld personalizado
     if customWeld then
         local head = accessory.Parent:FindFirstChild("Head")
         if head then
@@ -39,18 +40,13 @@ local function setupAccessory(accessory, customWeld, initialOffset)
                 end
             end
             local newWeld = Instance.new("Weld")
+            newWeld.Name = "AccessoryWeld"
             newWeld.Part0 = head
             newWeld.Part1 = handle
 
-            -- Start at initial offset (20 studs below) if specified
             if initialOffset then
                 newWeld.C0 = customWeld * CFrame.new(0, -20, 0)
-                -- Animate to original position
-                local tweenInfo = TweenInfo.new(
-                    5, -- Duration (5 seconds for smooth rise)
-                    Enum.EasingStyle.Sine,
-                    Enum.EasingDirection.InOut
-                )
+                local tweenInfo = TweenInfo.new(5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
                 local tween = TweenService:Create(newWeld, tweenInfo, {C0 = customWeld})
                 tween:Play()
             else
@@ -62,7 +58,7 @@ local function setupAccessory(accessory, customWeld, initialOffset)
         end
     end
 
-    -- Monitor VANS_Umbrella specifically to prevent it from disappearing
+    -- Monitorar VANS_Umbrella
     if accessory.Name == "VANS_Umbrella" then
         accessory.AncestryChanged:Connect(function(_, parent)
             if not parent then
@@ -74,6 +70,27 @@ local function setupAccessory(accessory, customWeld, initialOffset)
             end
         end)
     end
+
+    -- Pull Handles System: Monitorar e corrigir posição do handle
+    local lastCheck = tick()
+    RunService.Heartbeat:Connect(function()
+        if tick() - lastCheck < 0.1 then return end -- Verificar a cada 0.1s para otimizar
+        lastCheck = tick()
+
+        if handle and handle.Parent and LocalPlayer.Character then
+            local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                local weld = handle:FindFirstChild("AccessoryWeld")
+                if weld and weld.Part0 and weld.Part1 then
+                    local distance = (handle.Position - humanoidRootPart.Position).Magnitude
+                    if distance > 50 then
+                        warn("Handle " .. accessory.Name .. " too far! Reapplying weld...")
+                        handle.CFrame = humanoidRootPart.CFrame * customWeld
+                    end
+                end
+            end
+        end
+    end)
 end
 
 local function setupAccessories()
@@ -82,13 +99,11 @@ local function setupAccessories()
 
     local humanoid = character:FindFirstChildOfClass("Humanoid")
     if humanoid then
-        -- Set JumpPower and WalkSpeed to 0
         humanoid.JumpPower = 0
         humanoid.WalkSpeed = 0
-        -- Restore defaults after 5 seconds
         task.delay(5, function()
-            humanoid.JumpPower = 50 -- Default Roblox JumpPower
-            humanoid.WalkSpeed = 16 -- Default Roblox WalkSpeed
+            humanoid.JumpPower = 50
+            humanoid.WalkSpeed = 16
         end)
     end
 
@@ -105,8 +120,10 @@ local function setupAccessories()
     end
 end
 
--- Run initially and on character added
+-- Inicializar
 setupAccessories()
+
+-- Monitorar quando o personagem é adicionado
 LocalPlayer.CharacterAdded:Connect(function()
     task.wait(0.1)
     setupAccessories()
