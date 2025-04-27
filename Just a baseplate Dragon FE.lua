@@ -42,13 +42,13 @@ local function setupAccessory(accessory, customWeld, initialOffset)
             newWeld.Part0 = head
             newWeld.Part1 = handle
 
-            -- Start at initial offset (20 studs below)
+            -- Start at initial offset (20 studs below) if specified
             if initialOffset then
                 newWeld.C0 = customWeld * CFrame.new(0, -20, 0)
                 -- Animate to original position
                 local tweenInfo = TweenInfo.new(
-                    5, -- Duration (5 seconds for smooth rise)
-                    Enum.EasingStyle.Sine, -- Smooth easing
+                    10, -- Duration (10 seconds for smooth rise)
+                    Enum.EasingStyle.Sine,
                     Enum.EasingDirection.InOut
                 )
                 local tween = TweenService:Create(newWeld, tweenInfo, {C0 = customWeld})
@@ -85,15 +85,15 @@ local function setupAccessories()
         -- Set JumpPower and WalkSpeed to 0
         humanoid.JumpPower = 0
         humanoid.WalkSpeed = 0
-        -- Restore defaults after 5 seconds
-        task.delay(5, function()
+        -- Restore defaults after 10 seconds
+        task.delay(10, function()
             humanoid.JumpPower = 50 -- Default Roblox JumpPower
             humanoid.WalkSpeed = 16 -- Default Roblox WalkSpeed
         end)
     end
 
     local accessories = {
-        {name = "PogoStick", weld = CFrame.new(-8, 0, 0), offset = true}, -- 8 studs to the left
+        {name = "PogoStick", weld = CFrame.new(-8, 0, 0) * CFrame.Angles(0, math.rad(90), 0), offset = true}, -- 8 studs to the left, rotated to face right
         {name = "PlaneModel"},
         {name = "VANS_Umbrella", weld = CFrame.new(0, 11, 14), offset = true}, -- 11 studs above, 14 studs forward
         {name = "Hat1"},
