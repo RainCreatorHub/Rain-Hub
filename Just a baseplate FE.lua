@@ -66,7 +66,7 @@ local function setupAccessories()
             handle.CanCollide = false
             handle.Anchored = false -- Segue o weld
 
-            -- Ajusta o VANS_Umbrella para ficar 11 studs acima e 14 studs para trás
+            -- Ajusta o VANS_Umbrella para ficar 11 studs acima e 14 studs para frente
             if head then
                 local weld = handle:FindFirstChildWhichIsA("Weld") or handle:FindFirstChildWhichIsA("WeldConstraint")
                 if weld then
@@ -75,9 +75,9 @@ local function setupAccessories()
                 local newWeld = Instance.new("Weld")
                 newWeld.Part0 = head
                 newWeld.Part1 = handle
-                newWeld.C0 = CFrame.new(0, 11, 14) -- 11 studs acima, 14 studs para trás
+                newWeld.C0 = CFrame.new(0, 11, 14) -- 11 studs acima, 14 studs para frente
                 newWeld.Parent = handle
-                print("VANS_Umbrella posicionado")
+                print("VANS_Umbrella posicionado 11 studs acima e 14 studs para frente")
             end
         else
             print("Handle não encontrado em: VANS_Umbrella")
