@@ -26,7 +26,7 @@ end
 -- Messages to send
 local customMessage = "-gh 63690008 62234425 48474313 62724852 451220849 48474294 9350274205"
 local netMessage = "-net"
-local madeByzaqueMessage = "Mano isso que eu criei é FE?"
+local madeByzaqueMessage = "Made By zaque_blox"
 
 -- Send the first message immediately
 SendChatMessage(customMessage)
@@ -37,7 +37,7 @@ task.wait(0.7)
 -- Send the second message after the delay
 SendChatMessage(netMessage)
 
--- Wait for 0.2 seconds before sending "Made by Duck"
+-- Wait for 0.2 seconds before sending "Made by zaque_blox"
 task.wait(0.2)
 
 -- Send "Made by zaque_blox" message after -net
