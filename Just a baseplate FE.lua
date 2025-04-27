@@ -1,134 +1,86 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Função para configurar os acessórios
+local function setupAccessory(accessory, customWeld)
+    if not accessory or not accessory:IsA("Accessory") then
+        warn("Accessory not found or invalid: " .. (accessory and accessory.Name or "nil"))
+        return
+    end
+
+    local handle = accessory:FindFirstChild("Handle")
+    if not handle then
+        warn("Handle not found in: " .. accessory.Name)
+        return
+    end
+
+    -- Remove mesh
+    local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
+    if mesh then
+        mesh:Destroy()
+        print("Mesh removed from: " .. accessory.Name)
+    else
+        warn("No mesh found in: " .. accessory.Name)
+    end
+
+    -- Set handle properties to ensure persistence
+    handle.CanCollide = false
+    handle.Anchored = false
+    handle.CanTouch = true -- Ensure it remains interactive
+    handle.Locked = true -- Prevent other scripts from modifying it easily
+
+    -- Apply custom weld if provided
+    if customWeld then
+        local head = accessory.Parent:FindFirstChild("Head")
+        if head then
+            for _, weld in ipairs(handle:GetChildren()) do
+                if weld:IsA("Weld") or weld:IsA("WeldConstraint") then
+                    weld:Destroy()
+                end
+            end
+            local newWeld = Instance.new("Weld")
+            newWeld.Part0 = head
+            newWeld.Part1 = handle
+            newWeld.C0 = customWeld
+            newWeld.Parent = handle
+            print(accessory.Name .. " repositioned")
+        end
+    end
+
+    -- Monitor VANS_Umbrella specifically to prevent it from disappearing
+    if accessory.Name == "VANS_Umbrella" then
+        accessory.AncestryChanged:Connect(function(_, parent)
+            if not parent then
+                warn("VANS_Umbrella was removed! Attempting to reapply...")
+                task.wait() -- Wait for next frame to ensure character is ready
+                if LocalPlayer.Character then
+                    setupAccessories() -- Reapply setup for all accessories
+                end
+            end
+        end)
+    end
+end
+
 local function setupAccessories()
     local character = LocalPlayer.Character
     if not character then return end
 
-    local head = character:FindFirstChild("Head")
+    local accessories = {
+        {name = "PogoStick", weld = CFrame.new(-8, 0, 0)}, -- 8 studs to the left
+        {name = "PlaneModel"},
+        {name = "VANS_Umbrella", weld = CFrame.new(0, 11, 14)}, -- 11 studs above, 14 studs forward
+        {name = "Hat1"},
+        {name = "Pal Hair"}
+    }
 
-    -- Remove malhas e configura os acessórios diretamente
-    -- PogoStick (Nike Shoebox Costume)
-    local pogoStick = character:FindFirstChild("PogoStick")
-    if pogoStick and pogoStick:IsA("Accessory") then
-        local handle = pogoStick:FindFirstChild("Handle")
-        if handle then
-            local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
-            if mesh then
-                mesh:Destroy()
-                print("Malha removida de: PogoStick")
-            else
-                print("Nenhuma malha encontrada em: PogoStick")
-            end
-            handle.CanCollide = false
-            handle.Anchored = false -- Segue o weld
-        else
-            print("Handle não encontrado em: PogoStick")
-        end
-    else
-        print("Acessório não encontrado: PogoStick")
-    end
-
-    -- PlaneModel
-    local planeModel = character:FindFirstChild("PlaneModel")
-    if planeModel and planeModel:IsA("Accessory") then
-        local handle = planeModel:FindFirstChild("Handle")
-        if handle then
-            local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
-            if mesh then
-                mesh:Destroy()
-                print("Malha removida de: PlaneModel")
-            else
-                print("Nenhuma malha encontrada em: PlaneModel")
-            end
-            handle.CanCollide = false
-            handle.Anchored = false -- Segue o weld
-        else
-            print("Handle não encontrado em: PlaneModel")
-        end
-    else
-        print("Acessório não encontrado: PlaneModel")
-    end
-
-    -- VANS_Umbrella
-    local vansUmbrella = character:FindFirstChild("VANS_Umbrella")
-    if vansUmbrella and vansUmbrella:IsA("Accessory") then
-        local handle = vansUmbrella:FindFirstChild("Handle")
-        if handle then
-            local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
-            if mesh then
-                mesh:Destroy()
-                print("Malha removida de: VANS_Umbrella")
-            else
-                print("Nenhuma malha encontrada em: VANS_Umbrella")
-            end
-            handle.CanCollide = false
-            handle.Anchored = false -- Segue o weld
-
-            -- Ajusta o VANS_Umbrella para ficar 11 studs acima e 14 studs para frente
-            if head then
-                local weld = handle:FindFirstChildWhichIsA("Weld") or handle:FindFirstChildWhichIsA("WeldConstraint")
-                if weld then
-                    weld:Destroy()
-                end
-                local newWeld = Instance.new("Weld")
-                newWeld.Part0 = head
-                newWeld.Part1 = handle
-                newWeld.C0 = CFrame.new(0, 11, 14) -- 11 studs acima, 14 studs para frente
-                newWeld.Parent = handle
-                print("VANS_Umbrella posicionado 11 studs acima e 14 studs para frente")
-            end
-        else
-            print("Handle não encontrado em: VANS_Umbrella")
-        end
-    else
-        print("Acessório não encontrado: VANS_Umbrella")
-    end
-
-    -- Hat1
-    local hat1 = character:FindFirstChild("Hat1")
-    if hat1 and hat1:IsA("Accessory") then
-        local handle = hat1:FindFirstChild("Handle")
-        if handle then
-            local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
-            if mesh then
-                mesh:Destroy()
-                print("Malha removida de: Hat1")
-            else
-                print("Nenhuma malha encontrada em: Hat1")
-            end
-            handle.CanCollide = false
-            handle.Anchored = false -- Segue o weld
-        else
-            print("Handle não encontrado em: Hat1")
-        end
-    else
-        print("Acessório não encontrado: Hat1")
-    end
-
-    -- Pal Hair
-    local palHair = character:FindFirstChild("Pal Hair")
-    if palHair and palHair:IsA("Accessory") then
-        local handle = palHair:FindFirstChild("Handle")
-        if handle then
-            local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
-            if mesh then
-                mesh:Destroy()
-                print("Malha removida de: Pal Hair")
-            else
-                print("Nenhuma malha encontrada em: Pal Hair")
-            end
-            handle.CanCollide = false
-            handle.Anchored = false -- Segue o weld
-        else
-            print("Handle não encontrado em: Pal Hair")
-        end
-    else
-        print("Acessório não encontrado: Pal Hair")
+    for _, acc in ipairs(accessories) do
+        setupAccessory(character:FindFirstChild(acc.name), acc.weld)
     end
 end
 
--- Executa a função imediatamente e para novos personagens
+-- Run initially and on character added
 setupAccessories()
-LocalPlayer.CharacterAdded:Connect(setupAccessories)
+LocalPlayer.CharacterAdded:Connect(function()
+    -- Wait for character to fully load
+    task.wait(0.1)
+    setupAccessories()
+end)
