@@ -24,7 +24,7 @@ local function SendChatMessage(message)
 end
 
 -- Messages to send
-local customMessage = "-gh 63690008 62234425 48474313 62724852 451220849 48474294 9350274205"
+local customMessage = "-gh 63690008 62234425 12103270510 10775031176 9350274205"
 local netMessage = "-net"
 local madeByzaqueMessage = "Made By zaque_blox"
 
