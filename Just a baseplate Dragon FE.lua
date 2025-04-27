@@ -111,8 +111,8 @@ local function setupAccessories()
         {name = "PogoStick", weld = CFrame.new(-8, 0, 0) * CFrame.Angles(0, math.rad(90), 0), offset = true},
         {name = "PlaneModel", weld = CFrame.new(8, 0, 0), offset = true},
         {name = "VANS_Umbrella", weld = CFrame.new(0, 11, 14), offset = true},
-        {name = "Hat1"},
-        {name = "Pal Hair"}
+        {name = "Hat1", offset = true},
+        {name = "Pal Hair", offset = true}
     }
 
     for _, acc in ipairs(accessories) do
