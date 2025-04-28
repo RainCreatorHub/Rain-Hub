@@ -15,13 +15,11 @@ local function setupAccessory(accessory, customWeld, initialOffset)
         return
     end
 
-    -- Remover mesh
+    -- Remover mesh (somente 1x, sem verificar novamente)
     local mesh = handle:FindFirstChildWhichIsA("SpecialMesh") or handle:FindFirstChildWhichIsA("MeshPart")
     if mesh then
         mesh:Destroy()
         print("Mesh removed from: " .. accessory.Name)
-    else
-        warn("No mesh found in: " .. accessory.Name)
     end
 
     -- Configurar propriedades do handle
@@ -34,11 +32,14 @@ local function setupAccessory(accessory, customWeld, initialOffset)
     if customWeld then
         local head = accessory.Parent:FindFirstChild("Head")
         if head then
+            -- Remover welds antigos
             for _, weld in ipairs(handle:GetChildren()) do
                 if weld:IsA("Weld") or weld:IsA("WeldConstraint") then
                     weld:Destroy()
                 end
             end
+
+            -- Criar novo weld
             local newWeld = Instance.new("Weld")
             newWeld.Name = "AccessoryWeld"
             newWeld.Part0 = head
@@ -46,7 +47,7 @@ local function setupAccessory(accessory, customWeld, initialOffset)
 
             if initialOffset then
                 newWeld.C0 = customWeld * CFrame.new(0, -20, 0)
-                local tweenInfo = TweenInfo.new(5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+                local tweenInfo = TweenInfo.new(15, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
                 local tween = TweenService:Create(newWeld, tweenInfo, {C0 = customWeld})
                 tween:Play()
             else
@@ -101,7 +102,7 @@ local function setupAccessories()
     if humanoid then
         humanoid.JumpPower = 0
         humanoid.WalkSpeed = 0
-        task.delay(5, function()
+        task.delay(15, function()
             humanoid.JumpPower = 50
             humanoid.WalkSpeed = 16
         end)
