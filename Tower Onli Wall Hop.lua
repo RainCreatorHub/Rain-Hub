@@ -171,3 +171,16 @@ SettingsTab:AddSlider({
 })
 
 local AntiSection = SettingsTab:AddSection({"Anti"})
+
+local AntiVoid = SettingsTab:AddToggle({
+  Name = "Anti-void ( no function )",
+  Default = false,
+  Flag = "Anti-void",
+  Callback = function(Value)
+    if Value then
+      print("Toggle ativado!")
+    else
+      print("Toggle desativado!")
+    end
+  end
+})
