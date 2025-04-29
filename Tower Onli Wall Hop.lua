@@ -162,7 +162,7 @@ TeleportTab:AddDropdown({
 
 -- Aba esp
 local espTab = Window:MakeTab({"esp", "Eye"})
-espTab:AddSection({"esp"})
+espTab:AddSection({"normal ( esp )"})
 
 local espAtivo = false
 
@@ -197,6 +197,7 @@ end
 
 espTab:AddToggle({
     Name = "Player",
+    Description = "ver players no mapa",
     Default = false,
     Flag = "Player",
     Callback = function(state)
@@ -204,6 +205,54 @@ espTab:AddToggle({
             ativarESPPlayer()
         else
             desativarESPPlayer()
+        end
+    end
+})
+
+espTab:AddSection({"sword ( esp )"})
+
+local espadaESPAtivo = false
+local espadaHighlight = nil
+
+local function ativarESPEspada()
+    espadaESPAtivo = true
+    spawn(function()
+        while espadaESPAtivo do
+            local espada = game.Workspace:FindFirstChild("ClassicSword")
+            if espada and not espada:FindFirstChild("Highlight") then
+                espadaHighlight = Instance.new("Highlight")
+                espadaHighlight.Adornee = espada
+                espadaHighlight.OutlineColor = Color3.new(1, 0, 0) -- Vermelho
+                espadaHighlight.FillColor = Color3.new(0, 0, 0) -- Preenchimento preto (ou ajuste se quiser transparência)
+                espadaHighlight.FillTransparency = 0.8 -- Ajuste a transparência do preenchimento, se desejar
+                espadaHighlight.Parent = espada
+            elseif not espada and espadaHighlight then
+                espadaHighlight:Destroy()
+                espadaHighlight = nil
+            end
+            task.wait(0.04) -- Intervalo de verificação
+        end
+    end)
+end
+
+local function desativarESPEspada()
+    espadaESPAtivo = false
+    if espadaHighlight then
+        espadaHighlight:Destroy()
+        espadaHighlight = nil
+    end
+end
+
+espTab:AddToggle({
+    Name = "Sword",
+    Description = "Ver a espada ( se estiver spawnada )",
+    Default = false,
+    Flag = "Sword",
+    Callback = function(state)
+        if state then
+            ativarESPEspada()
+        else
+            desativarESPEspada()
         end
     end
 })
@@ -241,7 +290,7 @@ SettingsTab:AddSection({"Anti"})
 local AntiVoidEnabled = false
 SettingsTab:AddToggle({
     Name = "Anti-void",
-    Default = false,
+    Default = true,
     Flag = "AntiVoid",
     Callback = function(Value)
         AntiVoidEnabled = Value
