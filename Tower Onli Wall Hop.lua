@@ -16,7 +16,7 @@ repeat
     end
 until player
 
--- Carrega a biblioteca RedzHubUI
+-- Carrega a biblioteca RedzHubV5
 local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))()
 getgenv().TeleportMode = "Teleport"
 
@@ -41,7 +41,7 @@ end
 --== Interface ==--
 local Window = redzlib:MakeWindow({
     Title = "Rain Hub | Tower only wall hop",
-    SubTitle = "by zaque_blox",
+    SubTitle = "by ????",
     SaveFolder = "Rain_hub_tower_onli_wall_hop"
 })
 
@@ -146,7 +146,7 @@ TeleportTab:AddSection({"Teleport"})
 TeleportTab:AddDropdown({
     Name = "Locate",
     Description = "Selecione o local para teleportar",
-    Options = {"end", "sword"},
+    Options = {"end", "sword", "spawn"},
     Default = nil,
     Flag = "TeleportLocation",
     Callback = function(Value)
@@ -154,6 +154,8 @@ TeleportTab:AddDropdown({
             TeleportTo(Vector3.new(-78.22, 1664.81, 902.50))
         elseif Value == "sword" then
             TeleportTo(Vector3.new(-261.83, 1430.00, 619.79))
+        elseif Value == "spawn" then
+            TeleportTo(Vector3.new(-22, 1431, 520))
         end
     end
 })
