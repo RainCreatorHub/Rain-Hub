@@ -160,7 +160,6 @@ SettingsTab:AddDropdown({
 
 SettingsTab:AddSlider({
     Name = "Tween Speed",
-    Description = "Quanto maior o número mais lento",
     Min = 1,
     Max = 350,
     Increase = 1,
@@ -170,3 +169,5 @@ SettingsTab:AddSlider({
         print("Valor do Slider: " .. Value)
     end
 })
+
+local AntiSection = SettingsTab:AddSection({"Anti"})
