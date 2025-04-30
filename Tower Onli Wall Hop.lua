@@ -60,8 +60,11 @@ InfoTab:AddSection({"Creator"})
 InfoTab:AddParagraph({"Criador: zaque_blox", "Real Nick: zaquel638 Display Nick: zaqueblox"})
 InfoTab:AddParagraph({"Idade: 11", "essa é a minha idade Real!"})
 InfoTab:AddParagraph({"Membros: zaque_blox", "Só tem eu..."})
-InfoTab:AddParagraph({"Tem uma ui library?", "Sim"})
+
+InfoTab:AddSection({"Ui Library"})
+InfoTab:AddParagraph({"Tem uma ui library?", "sim"})
 InfoTab:AddParagraph({"Nome da ui library?", "Rain Lib"})
+InfoTab:AddParagraph({"Ui Library usada no código?", "Redz Library v5"})
 
 InfoTab:AddSection({"Links ( Proximo update )"})
 
@@ -222,10 +225,94 @@ espTab:AddSection({"normal ( esp )"})
 
 local espAtivo = false
 local maxDistance = 100000 -- Distância máxima em studs
+local playerHighlightColor = Color3.new(1, 0, 0) -- Cor inicial do contorno e preenchimento dos jogadores
+local playerRainbowLoopRunning = false -- Controle do loop Rainbow para jogadores
+local lastPlayerColor = "Red" -- Armazena a última cor selecionada para jogadores
+
+-- Lista das 30 cores para o ciclo Rainbow
+local rainbowColors = {
+    Color3.fromRGB(255, 0, 0),    -- Red
+    Color3.fromRGB(0, 0, 255),    -- Blue
+    Color3.fromRGB(255, 255, 0),  -- Yellow
+    Color3.fromRGB(0, 128, 0),    -- Green
+    Color3.fromRGB(128, 0, 128),  -- Purple
+    Color3.fromRGB(255, 165, 0),  -- Orange
+    Color3.fromRGB(255, 192, 203),-- Pink
+    Color3.fromRGB(0, 0, 0),      -- Black
+    Color3.fromRGB(255, 255, 255),-- White
+    Color3.fromRGB(128, 128, 128),-- Gray
+    Color3.fromRGB(165, 42, 42),  -- Brown
+    Color3.fromRGB(0, 255, 255),  -- Cyan
+    Color3.fromRGB(255, 0, 255),  -- Magenta
+    Color3.fromRGB(64, 224, 208), -- Turquoise
+    Color3.fromRGB(50, 205, 50),  -- Lime
+    Color3.fromRGB(75, 0, 130),   -- Indigo
+    Color3.fromRGB(238, 130, 238),-- Violet
+    Color3.fromRGB(255, 215, 0),  -- Gold
+    Color3.fromRGB(192, 192, 192),-- Silver
+    Color3.fromRGB(245, 245, 220),-- Beige
+    Color3.fromRGB(255, 127, 127),-- Coral
+    Color3.fromRGB(0, 128, 128),  -- Teal
+    Color3.fromRGB(128, 0, 0),    -- Maroon
+    Color3.fromRGB(128, 128, 0),  -- Olive
+    Color3.fromRGB(0, 0, 128),    -- Navy
+    Color3.fromRGB(220, 20, 60),  -- Crimson
+    Color3.fromRGB(152, 255, 152),-- Mint
+    Color3.fromRGB(230, 230, 250),-- Lavender
+    Color3.fromRGB(250, 128, 114),-- Salmon
+    Color3.fromRGB(255, 0, 128)   -- Fuchsia
+}
+
+local function updatePlayerHighlightColor(colorName)
+    print("Atualizando cor dos jogadores para:", colorName)
+    lastPlayerColor = colorName -- Armazena a cor selecionada
+    playerRainbowLoopRunning = false -- Para qualquer loop Rainbow anterior
+
+    if colorName == "Rainbow" then
+        playerRainbowLoopRunning = true
+        coroutine.wrap(function()
+            print("Iniciando ciclo Rainbow para jogadores")
+            local colorIndex = 1
+            while espAtivo and playerRainbowLoopRunning do
+                playerHighlightColor = rainbowColors[colorIndex]
+                print("Cor atual jogadores:", colorIndex, playerHighlightColor)
+                for _, otherPlayer in pairs(Players:GetPlayers()) do
+                    if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("Highlight") then
+                        otherPlayer.Character.Highlight.OutlineColor = playerHighlightColor
+                        otherPlayer.Character.Highlight.FillColor = playerHighlightColor
+                    end
+                end
+                colorIndex = (colorIndex % #rainbowColors) + 1
+                task.wait(0.5)
+            end
+            print("Ciclo Rainbow dos jogadores parado")
+        end)()
+    else
+        if colorName == "Red" then
+            playerHighlightColor = Color3.new(1, 0, 0)
+        elseif colorName == "Blue" then
+            playerHighlightColor = Color3.new(0, 0, 1)
+        elseif colorName == "Yellow" then
+            playerHighlightColor = Color3.new(1, 1, 0)
+        end
+        print("Aplicando cor fixa para jogadores:", playerHighlightColor)
+        for _, otherPlayer in pairs(Players:GetPlayers()) do
+            if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("Highlight") then
+                otherPlayer.Character.Highlight.OutlineColor = playerHighlightColor
+                otherPlayer.Character.Highlight.FillColor = playerHighlightColor
+            end
+        end
+    end
+end
 
 local function ativarESPPlayer()
     espAtivo = true
-    spawn(function()
+    print("Ativando ESP para jogadores")
+    -- Usa a última cor selecionada ou o valor do dropdown
+    local currentColor = redzlib.Flags["PlayerEspColor"] or lastPlayerColor or "Red"
+    print("Cor inicial dos jogadores:", currentColor)
+    updatePlayerHighlightColor(currentColor)
+    coroutine.wrap(function()
         while espAtivo do
             for _, otherPlayer in pairs(Players:GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
@@ -237,11 +324,11 @@ local function ativarESPPlayer()
                             if not otherPlayer.Character:FindFirstChild("Highlight") then
                                 local highlight = Instance.new("Highlight")
                                 highlight.Adornee = otherPlayer.Character
-                                highlight.OutlineColor = Color3.new(0, 0, 0) -- Contorno preto
-                                highlight.FillColor = Color3.new(1, 0, 0) -- Vermelho
-                                highlight.OutlineTransparency = 0 -- Contorno totalmente visível
-                                highlight.FillTransparency = 0.5 -- Preenchimento semi-transparente
-                                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Sempre visível
+                                highlight.OutlineColor = playerHighlightColor
+                                highlight.FillColor = playerHighlightColor
+                                highlight.OutlineTransparency = 0
+                                highlight.FillTransparency = 0.5
+                                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                 highlight.Parent = otherPlayer.Character
                             end
                         else
@@ -254,11 +341,13 @@ local function ativarESPPlayer()
             end
             task.wait(0.04)
         end
-    end)
+    end)()
 end
 
 local function desativarESPPlayer()
     espAtivo = false
+    playerRainbowLoopRunning = false
+    print("Desativando ESP para jogadores")
     for _, otherPlayer in pairs(Players:GetPlayers()) do
         if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("Highlight") then
             otherPlayer.Character.Highlight:Destroy()
@@ -280,30 +369,72 @@ espTab:AddToggle({
     end
 })
 
+espTab:AddDropdown({
+    Name = "color ( player )",
+    Description = "selecionar a cor do contorno",
+    Options = {"Red", "Blue", "Yellow", "Rainbow"},
+    Default = "Red",
+    Flag = "PlayerEspColor",
+    Callback = function(Value)
+        updatePlayerHighlightColor(Value)
+    end
+})
+
 espTab:AddSection({"sword ( esp )"})
 
 local espadaESPAtivo = false
 local espadaHighlight = nil
-local maxDistance = 100000 -- Distância máxima em studs
-local espadaHighlightColor = Color3.new(1, 0, 0) -- Cor inicial do contorno da espada (vermelho)
+local maxDistance = 100000
+local espadaHighlightColor = Color3.new(1, 0, 0)
+local swordRainbowLoopRunning = false -- Controle do loop Rainbow para espada
+local lastSwordColor = "Red" -- Armazena a última cor selecionada para espada
 
 local function updateHighlightColor(colorName)
-    if colorName == "Red" then
-        espadaHighlightColor = Color3.new(1, 0, 0)
-    elseif colorName == "Blue" then
-        espadaHighlightColor = Color3.new(0, 0, 1)
-    elseif colorName == "Yellow" then
-        espadaHighlightColor = Color3.new(1, 1, 0)
-    end
-    -- Atualiza o Highlight existente, se houver
-    if espadaHighlight and espadaHighlight.Adornee then
-        espadaHighlight.OutlineColor = espadaHighlightColor
+    print("Atualizando cor da espada para:", colorName)
+    lastSwordColor = colorName -- Armazena a cor selecionada
+    swordRainbowLoopRunning = false -- Para qualquer loop Rainbow anterior
+
+    if colorName == "Rainbow" then
+        swordRainbowLoopRunning = true
+        coroutine.wrap(function()
+            print("Iniciando ciclo Rainbow para espada")
+            local colorIndex = 1
+            while espadaESPAtivo and swordRainbowLoopRunning do
+                espadaHighlightColor = rainbowColors[colorIndex]
+                print("Cor atual espada:", colorIndex, espadaHighlightColor)
+                if espadaHighlight and espadaHighlight.Adornee then
+                    espadaHighlight.OutlineColor = espadaHighlightColor
+                    espadaHighlight.FillColor = espadaHighlightColor
+                end
+                colorIndex = (colorIndex % #rainbowColors) + 1
+                task.wait(0.5)
+            end
+            print("Ciclo Rainbow da espada parado")
+        end)()
+    else
+        if colorName == "Red" then
+            espadaHighlightColor = Color3.new(1, 0, 0)
+        elseif colorName == "Blue" then
+            espadaHighlightColor = Color3.new(0, 0, 1)
+        elseif colorName == "Yellow" then
+            espadaHighlightColor = Color3.new(1, 1, 0)
+        end
+        print("Aplicando cor fixa para espada:", espadaHighlightColor)
+        if espadaHighlight and espadaHighlight.Adornee then
+            espadaHighlight.OutlineColor = espadaHighlightColor
+            espadaHighlight.FillColor = espadaHighlightColor
+        end
     end
 end
 
 local function ativarESPEspada()
     espadaESPAtivo = true
-    spawn(function()
+    print("Ativando ESP para espada")
+    -- Usa a última cor selecionada ou o valor do dropdown
+    local currentColor = redzlib.Flags["SwordEspColor"] or lastSwordColor or "Red"
+    print("Cor inicial da espada:", currentColor)
+    updateHighlightColor(currentColor)
+    coroutine.wrap(function()
         while espadaESPAtivo do
             local espada = game.Workspace:FindFirstChild("ClassicSword")
             local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
@@ -313,11 +444,11 @@ local function ativarESPEspada()
                 if distance <= maxDistance and not espada:FindFirstChild("Highlight") then
                     espadaHighlight = Instance.new("Highlight")
                     espadaHighlight.Adornee = espada
-                    espadaHighlight.OutlineColor = espadaHighlightColor -- Usa a cor selecionada
-                    espadaHighlight.FillColor = Color3.new(0, 0, 0) -- Preenchimento preto
-                    espadaHighlight.OutlineTransparency = 0 -- Contorno totalmente visível
-                    espadaHighlight.FillTransparency = 0.8 -- Preenchimento mais transparente
-                    espadaHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Sempre visível
+                    espadaHighlight.OutlineColor = espadaHighlightColor
+                    espadaHighlight.FillColor = espadaHighlightColor
+                    espadaHighlight.OutlineTransparency = 0
+                    espadaHighlight.FillTransparency = 0.8
+                    espadaHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                     espadaHighlight.Parent = espada
                 elseif (distance > maxDistance or not espada) and espadaHighlight then
                     espadaHighlight:Destroy()
@@ -329,11 +460,13 @@ local function ativarESPEspada()
             end
             task.wait(0.04)
         end
-    end)
+    end)()
 end
 
 local function desativarESPEspada()
     espadaESPAtivo = false
+    swordRainbowLoopRunning = false
+    print("Desativando ESP para espada")
     if espadaHighlight then
         espadaHighlight:Destroy()
         espadaHighlight = nil
@@ -342,7 +475,7 @@ end
 
 espTab:AddToggle({
     Name = "Sword",
-    Description = "Ver a espada ( se estiver spawnada )",
+    Description = "Ver a espada",
     Default = false,
     Flag = "Sword",
     Callback = function(state)
@@ -357,7 +490,7 @@ espTab:AddToggle({
 espTab:AddDropdown({
     Name = "color ( sword )",
     Description = "selecionar a cor do contorno",
-    Options = {"Red", "Blue", "Yellow"},
+    Options = {"Red", "Blue", "Yellow", "Rainbow"},
     Default = "Red",
     Flag = "SwordEspColor",
     Callback = function(Value)
