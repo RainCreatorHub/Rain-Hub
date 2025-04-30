@@ -41,7 +41,7 @@ end
 --== Interface ==--
 local Window = redzlib:MakeWindow({
     Title = "Rain Hub | Tower only wall hop",
-    SubTitle = "by ????",
+    SubTitle = "by zaque_blox",
     SaveFolder = "Rain_hub_tower_onli_wall_hop"
 })
 
@@ -56,7 +56,14 @@ InfoTab:AddSection({"Info"})
 
 InfoTab:AddParagraph({"Seja bem-vindo(a) " .. player.Name .. " ao Rain Hub!", "Obrigado por usar o Rain Hub :D"})
 
-InfoTab:AddSection({"Creator ( Próximo Update )"})
+InfoTab:AddSection({"Creator"})
+InfoTab:AddParagraph({"Criador: zaque_blox", "Real Nick: zaquel638 Display Nick: zaqueblox"})
+InfoTab:AddParagraph({"Idade: 11", "essa é a minha idade Real!"})
+InfoTab:AddParagraph({"Membros: zaque_blox", "Só tem eu..."})
+InfoTab:AddParagraph({"Tem uma ui library?", "Sim"})
+InfoTab:AddParagraph({"Nome da ui library?", "Rain Lib"})
+
+InfoTab:AddSection({"Links ( Proximo update )"})
 
 -- Aba Principal
 local MainTab = Window:MakeTab({"Main", "Home"})
@@ -137,7 +144,56 @@ MainTab:AddToggle({
     end
 })
 
-MainTab:AddSection({"Player ( Próximo update )"})
+MainTab:AddSection({"Player"})
+
+-- Adiciona o toggle Noclip
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+local Noclipping = nil
+local Clip = true -- Começa como verdadeiro (colisão ativada)
+local floatName = "HumanoidRootPart" -- Ou qualquer nome de parte a ignorar
+
+MainTab:AddToggle({
+    Name = "Noclip",
+    Description = "Permite atravessar paredes e objetos",
+    Default = false,
+    Flag = "NoclipToggle",
+    Callback = function(Value)
+        Clip = not Value
+
+        if not Clip then
+            -- Ativa o noclip
+            local function NoclipLoop()
+                if not Clip and LocalPlayer.Character then
+                    for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
+                        if child:IsA("BasePart") and child.CanCollide and child.Name ~= floatName then
+                            child.CanCollide = true
+                        end
+                    end
+                end
+            end
+
+            Noclipping = RunService.Stepped:Connect(NoclipLoop)
+        else
+            -- Desativa o noclip
+            if Noclipping then
+                Noclipping:Disconnect()
+                Noclipping = nil
+            end
+
+            if LocalPlayer.Character then
+                for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if child:IsA("BasePart") then
+                        child.CanCollide = true
+                    end
+                end
+            end
+        end
+    end
+})
 
 -- Aba Teleporte
 local TeleportTab = Window:MakeTab({"Teleport", "Locate"})
@@ -165,6 +221,7 @@ local espTab = Window:MakeTab({"esp", "Eye"})
 espTab:AddSection({"normal ( esp )"})
 
 local espAtivo = false
+local maxDistance = 100000 -- Distância máxima em studs
 
 local function ativarESPPlayer()
     espAtivo = true
@@ -172,12 +229,26 @@ local function ativarESPPlayer()
         while espAtivo do
             for _, otherPlayer in pairs(Players:GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    if not otherPlayer.Character:FindFirstChild("Highlight") then
-                        local highlight = Instance.new("Highlight")
-                        highlight.Adornee = otherPlayer.Character
-                        highlight.OutlineColor = Color3.new(0, 0, 0)
-                        highlight.FillColor = Color3.new(1, 0, 0)
-                        highlight.Parent = otherPlayer.Character
+                    local root = otherPlayer.Character.HumanoidRootPart
+                    local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                    if playerRoot then
+                        local distance = (playerRoot.Position - root.Position).Magnitude
+                        if distance <= maxDistance then
+                            if not otherPlayer.Character:FindFirstChild("Highlight") then
+                                local highlight = Instance.new("Highlight")
+                                highlight.Adornee = otherPlayer.Character
+                                highlight.OutlineColor = Color3.new(0, 0, 0) -- Contorno preto
+                                highlight.FillColor = Color3.new(1, 0, 0) -- Vermelho
+                                highlight.OutlineTransparency = 0 -- Contorno totalmente visível
+                                highlight.FillTransparency = 0.5 -- Preenchimento semi-transparente
+                                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Sempre visível
+                                highlight.Parent = otherPlayer.Character
+                            end
+                        else
+                            if otherPlayer.Character:FindFirstChild("Highlight") then
+                                otherPlayer.Character.Highlight:Destroy()
+                            end
+                        end
                     end
                 end
             end
@@ -213,24 +284,50 @@ espTab:AddSection({"sword ( esp )"})
 
 local espadaESPAtivo = false
 local espadaHighlight = nil
+local maxDistance = 100000 -- Distância máxima em studs
+local espadaHighlightColor = Color3.new(1, 0, 0) -- Cor inicial do contorno da espada (vermelho)
+
+local function updateHighlightColor(colorName)
+    if colorName == "Red" then
+        espadaHighlightColor = Color3.new(1, 0, 0)
+    elseif colorName == "Blue" then
+        espadaHighlightColor = Color3.new(0, 0, 1)
+    elseif colorName == "Yellow" then
+        espadaHighlightColor = Color3.new(1, 1, 0)
+    end
+    -- Atualiza o Highlight existente, se houver
+    if espadaHighlight and espadaHighlight.Adornee then
+        espadaHighlight.OutlineColor = espadaHighlightColor
+    end
+end
 
 local function ativarESPEspada()
     espadaESPAtivo = true
     spawn(function()
         while espadaESPAtivo do
             local espada = game.Workspace:FindFirstChild("ClassicSword")
-            if espada and not espada:FindFirstChild("Highlight") then
-                espadaHighlight = Instance.new("Highlight")
-                espadaHighlight.Adornee = espada
-                espadaHighlight.OutlineColor = Color3.new(1, 0, 0) -- Vermelho
-                espadaHighlight.FillColor = Color3.new(0, 0, 0) -- Preenchimento preto (ou ajuste se quiser transparência)
-                espadaHighlight.FillTransparency = 0.8 -- Ajuste a transparência do preenchimento, se desejar
-                espadaHighlight.Parent = espada
+            local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if espada and playerRoot then
+                local espadaPos = espada:IsA("BasePart") and espada.Position or espada:GetPivot().Position
+                local distance = (playerRoot.Position - espadaPos).Magnitude
+                if distance <= maxDistance and not espada:FindFirstChild("Highlight") then
+                    espadaHighlight = Instance.new("Highlight")
+                    espadaHighlight.Adornee = espada
+                    espadaHighlight.OutlineColor = espadaHighlightColor -- Usa a cor selecionada
+                    espadaHighlight.FillColor = Color3.new(0, 0, 0) -- Preenchimento preto
+                    espadaHighlight.OutlineTransparency = 0 -- Contorno totalmente visível
+                    espadaHighlight.FillTransparency = 0.8 -- Preenchimento mais transparente
+                    espadaHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Sempre visível
+                    espadaHighlight.Parent = espada
+                elseif (distance > maxDistance or not espada) and espadaHighlight then
+                    espadaHighlight:Destroy()
+                    espadaHighlight = nil
+                end
             elseif not espada and espadaHighlight then
                 espadaHighlight:Destroy()
                 espadaHighlight = nil
             end
-            task.wait(0.04) -- Intervalo de verificação
+            task.wait(0.04)
         end
     end)
 end
@@ -254,6 +351,17 @@ espTab:AddToggle({
         else
             desativarESPEspada()
         end
+    end
+})
+
+espTab:AddDropdown({
+    Name = "color ( sword )",
+    Description = "selecionar a cor do contorno",
+    Options = {"Red", "Blue", "Yellow"},
+    Default = "Red",
+    Flag = "SwordEspColor",
+    Callback = function(Value)
+        updateHighlightColor(Value)
     end
 })
 
