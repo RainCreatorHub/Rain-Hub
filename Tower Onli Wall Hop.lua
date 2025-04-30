@@ -66,7 +66,22 @@ InfoTab:AddParagraph({"Tem uma ui library?", "sim"})
 InfoTab:AddParagraph({"Nome da ui library?", "Rain Lib"})
 InfoTab:AddParagraph({"Ui Library usada no código?", "Redz Library v5"})
 
-InfoTab:AddSection({"Links ( Proximo update )"})
+InfoTab:AddSection({"Links ( sociais )"})
+local CopyButton = InfoTab:AddButton({
+    Title = "Tiktok ( oficial )",
+    Callback = function()
+        setclipboard("https://www.tiktok.com/@rain_creator_hub?_t=ZS-8vxzg1IZuLZ&_r=1")
+    end
+})
+
+local CopyButton = InfoTab:AddButton({
+    Title = "Tiktok ( oficial )",
+    Callback = function()
+        setclipboard("https://www.tiktok.com/@zaque_blox.ofc?_t=ZM-8vxzwlorCpL&_r=1")
+    end
+})
+
+InfoTab:AddSection({"Links ( proximo update )"})
 
 -- Aba Principal
 local MainTab = Window:MakeTab({"Main", "Home"})
