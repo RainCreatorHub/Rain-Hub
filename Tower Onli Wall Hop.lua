@@ -85,7 +85,7 @@ InfoTab:AddSection({"Links ( Library )"})
 local CopyButton = InfoTab:AddButton({
     Title = "Library ( Redz Library v5 )",
     Callback = function()
-        setclipboard("https://github.com/zaque-blox/Redz-Library-")
+        setclipboard("https://github.com/zaque-blox/Redz-Library-/blob/main/README.md")
     end
 })
 
