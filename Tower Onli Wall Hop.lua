@@ -49,7 +49,6 @@ Window:AddMinimizeButton({
 -- Aba Info
 local InfoTab = Window:MakeTab({"Info", "Info"})
 InfoTab:AddSection({"Info"})
-
 InfoTab:AddParagraph({"Seja bem-vindo(a) " .. player.Name .. " ao Rain Hub!", "Obrigado por usar o Rain Hub :D"})
 
 InfoTab:AddSection({"Creator"})
@@ -63,14 +62,13 @@ InfoTab:AddParagraph({"Nome da ui library?", "Rain Lib"})
 InfoTab:AddParagraph({"Ui Library usada no código?", "Redz Library v5"})
 
 InfoTab:AddSection({"Links ( sociais )"})
-local CopyButton = InfoTab:AddButton({
+InfoTab:AddButton({
     Title = "Tiktok ( oficial ) - ( Rain Creator )",
     Callback = function()
         setclipboard("https://www.tiktok.com/@rain_creator_hub?_t=ZS-8vxzg1IZuLZ&_r=1")
     end
 })
-
-local CopyButton = InfoTab:AddButton({
+InfoTab:AddButton({
     Title = "Tiktok ( oficial ) - ( zaque_blox )",
     Callback = function()
         setclipboard("https://www.tiktok.com/@zaque_blox.ofc?_t=ZM-8vxzwlorCpL&_r=1")
@@ -78,14 +76,13 @@ local CopyButton = InfoTab:AddButton({
 })
 
 InfoTab:AddSection({"Links ( Library )"})
-local CopyButton = InfoTab:AddButton({
+InfoTab:AddButton({
     Title = "Library ( Redz Library v5 )",
     Callback = function()
         setclipboard("https://github.com/zaque-blox/Redz-Library-/blob/main/README.md")
     end
 })
-
-local CopyButton = InfoTab:AddButton({
+InfoTab:AddButton({
     Title = "Library ( Rain Lib ) - ( Minha Ui Library )",
     Callback = function()
         setclipboard("https://github.com/RainCreatorHub/RainLib/blob/main/README.md")
@@ -128,7 +125,7 @@ local autoSwordLoop
 MainTab:AddToggle({
     Name = "Auto Get Sword",
     Default = false,
-    Flag = "AutoSwordToggle",
+    Flag = "AutoSword",
     Callback = function(Value)
         local player = game.Players.LocalPlayer
         local character = player.Character
@@ -171,51 +168,42 @@ MainTab:AddToggle({
     end
 })
 
-MainTab:AddSection({"Player"})
+-- Seção de jogador
+MainTab:AddSection({"Players"})
 
--- Adiciona o toggle Noclip
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-
-local Noclipping = nil
-local Clip = true -- Começa como verdadeiro (colisão ativada)
-local floatName = "HumanoidRootPart" -- Ou qualquer nome de parte a ignorar
-
+local killAllLoop
 MainTab:AddToggle({
-    Name = "Noclip",
-    Description = "Permite atravessar paredes e objetos",
+    Name = "spam Kill All ( beta )",
+    Description = "matar todos ( fique com a espada equipada e fique clicando )",
     Default = false,
-    Flag = "NoclipToggle",
-    Callback = function(Value)
-        Clip = not Value
+    Callback = function(state)
+        if state then
+            killAllLoop = RunService.Heartbeat:Connect(function()
+                local localChar = player.Character
+                if not localChar then return end
+                local localHRP = localChar:FindFirstChild("HumanoidRootPart")
+                if not localHRP then return end
 
-        if not Clip then
-            -- Ativa o noclip
-            local function NoclipLoop()
-                if not Clip and LocalPlayer.Character then
-                    for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
-                        if child:IsA("BasePart") and child.CanCollide and child.Name ~= floatName then
-                            child.CanCollide = true
-                        end
+                for _, otherPlayer in ipairs(Players:GetPlayers()) do
+                    if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        local otherHRP = otherPlayer.Character.HumanoidRootPart
+                        otherHRP.Anchored = false
+                        otherHRP.Size = Vector3.new(10, 10, 10)
+                        otherHRP.CFrame = localHRP.CFrame * CFrame.new(math.random(-3,3), 0, math.random(-3,3))
                     end
                 end
-            end
-
-            Noclipping = RunService.Stepped:Connect(NoclipLoop)
+            end)
         else
-            -- Desativa o noclip
-            if Noclipping then
-                Noclipping:Disconnect()
-                Noclipping = nil
+            if killAllLoop then
+                killAllLoop:Disconnect()
+                killAllLoop = nil
             end
 
-            if LocalPlayer.Character then
-                for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
-                    if child:IsA("BasePart") then
-                        child.CanCollide = true
-                    end
+            -- Restaurar tamanho das hitboxes
+            for _, otherPlayer in ipairs(Players:GetPlayers()) do
+                if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    local otherHRP = otherPlayer.Character.HumanoidRootPart
+                    otherHRP.Size = Vector3.new(2, 2, 1)
                 end
             end
         end
