@@ -10,7 +10,7 @@ local Window = redzlib:MakeWindow({
 -- Botão de minimizar com imagem
 Window:AddMinimizeButton({
     Button = { Image = "rbxassetid://3926305904", BackgroundTransparency = 0 },
-    Corner = { CornerRadius = UDim.new(0, 1) },
+    Corner = { CornerRadius = UDim.new(1, 0) },
 })
 
 -- Aba de informações
@@ -24,18 +24,28 @@ InfoTab:AddParagraph({"Seja Bem-vindo(a), " .. playerName .. "!", ""})
 local ScriptTab = Window:MakeTab({"script", "box"})
 local ScriptSection = ScriptTab:AddSection({"Scripts (criados por mim)"})
 
--- Botão para Tower Onli Wall Hop
+-- Função separada para carregar o script
+local function TowerOnliWallHop()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Tower%20Onli%20Wall%20Hop.lua"))()
+end
+
+-- Botão
 ScriptTab:AddButton({
     Title = "Rain hub ( Tower Onli Wall Hop )",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Tower%20Onli%20Wall%20Hop.lua"))()
+        TowerOnliWallHop()
     end
 })
 
--- Botão para Just a Baseplate
+-- Função separada para carregar o script
+local function JustABaseplate()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Just%20a%20Baseplate%20Select.lua"))()
+end
+
+-- Botão 
 ScriptTab:AddButton({
-    Title = "Rain ( Just a Baseplate )",
+    Title = "Rain hub ( Just a Baseplate )",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Just%20a%20Baseplate%20Select.lua"))()
+        JustABaseplate()
     end
 })
