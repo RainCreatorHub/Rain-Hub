@@ -91,7 +91,7 @@ InfoTab:AddButton({
 
 -- Aba Principal
 local MainTab = Window:MakeTab({"Main", "Home"})
-MainTab:AddSection({"Sword"})
+MainTab:AddSection({"Sword ( Auto and No Auto )"})
 
 MainTab:AddButton({
     Name = "Get Sword",
@@ -169,27 +169,43 @@ MainTab:AddToggle({
 })
 
 -- Seção de jogador
-MainTab:AddSection({"Players"})
+MainTab:AddSection({"Player"})
 
 local killAllLoop
+local originalPositions = {} -- Tabela para armazenar posições iniciais
+
 MainTab:AddToggle({
     Name = "spam Kill All ( beta )",
     Description = "matar todos ( fique com a espada equipada e fique clicando )",
     Default = false,
     Callback = function(state)
         if state then
+            -- Limpar posições antigas
+            originalPositions = {}
+            
             killAllLoop = RunService.Heartbeat:Connect(function()
                 local localChar = player.Character
                 if not localChar then return end
                 local localHRP = localChar:FindFirstChild("HumanoidRootPart")
                 if not localHRP then return end
+                local localHumanoid = localChar:FindFirstChild("Humanoid")
+                if localHumanoid and localHumanoid.Health <= 0 then return end
 
                 for _, otherPlayer in ipairs(Players:GetPlayers()) do
-                    if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                        local otherHRP = otherPlayer.Character.HumanoidRootPart
-                        otherHRP.Anchored = false
-                        otherHRP.Size = Vector3.new(10, 10, 10)
-                        otherHRP.CFrame = localHRP.CFrame * CFrame.new(math.random(-3,3), 0, math.random(-3,3))
+                    if otherPlayer ~= player and otherPlayer.Character then
+                        local otherHRP = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        local otherHumanoid = otherPlayer.Character:FindFirstChild("Humanoid")
+                        if otherHRP and otherHumanoid and otherHumanoid.Health > 0 then
+                            -- Armazenar posição inicial se não estiver salva
+                            if not originalPositions[otherPlayer] then
+                                originalPositions[otherPlayer] = otherHRP.CFrame
+                            end
+                            -- Mover hitbox para 4 studs à frente
+                            otherHRP.Anchored = false
+                            otherHRP.Size = Vector3.new(10, 10, 10)
+                            local position = (localHRP.CFrame * CFrame.new(0, 0, -4)).Position
+                            otherHRP.CFrame = CFrame.new(position) * localHRP.CFrame.Rotation
+                        end
                     end
                 end
             end)
@@ -199,13 +215,18 @@ MainTab:AddToggle({
                 killAllLoop = nil
             end
 
-            -- Restaurar tamanho das hitboxes
-            for _, otherPlayer in ipairs(Players:GetPlayers()) do
-                if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local otherHRP = otherPlayer.Character.HumanoidRootPart
-                    otherHRP.Size = Vector3.new(2, 2, 1)
+            -- Restaurar tamanho e posições das hitboxes
+            for otherPlayer, originalCFrame in pairs(originalPositions) do
+                if otherPlayer.Character then
+                    local otherHRP = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    if otherHRP then
+                        otherHRP.Size = Vector3.new(2, 2, 1)
+                        otherHRP.CFrame = originalCFrame
+                    end
                 end
             end
+            -- Limpar tabela de posições
+            originalPositions = {}
         end
     end
 })
@@ -236,10 +257,10 @@ local espTab = Window:MakeTab({"esp", "Eye"})
 espTab:AddSection({"normal ( esp )"})
 
 local espAtivo = false
-local maxDistance = 100000 -- Distância máxima em studs
-local playerHighlightColor = Color3.new(1, 0, 0) -- Cor inicial do contorno e preenchimento dos jogadores
-local playerRainbowLoopRunning = false -- Controle do loop Rainbow para jogadores
-local lastPlayerColor = "Red" -- Armazena a última cor selecionada para jogadores
+local maxDistance = 100000
+local playerHighlightColor = Color3.new(1, 0, 0)
+local playerRainbowLoopRunning = false
+local lastPlayerColor = "Red"
 
 -- Lista das 30 cores para o ciclo Rainbow
 local rainbowColors = {
@@ -276,18 +297,15 @@ local rainbowColors = {
 }
 
 local function updatePlayerHighlightColor(colorName)
-    print("Atualizando cor dos jogadores para:", colorName)
-    lastPlayerColor = colorName -- Armazena a cor selecionada
-    playerRainbowLoopRunning = false -- Para qualquer loop Rainbow anterior
+    lastPlayerColor = colorName
+    playerRainbowLoopRunning = false
 
     if colorName == "Rainbow" then
         playerRainbowLoopRunning = true
         coroutine.wrap(function()
-            print("Iniciando ciclo Rainbow para jogadores")
             local colorIndex = 1
             while espAtivo and playerRainbowLoopRunning do
                 playerHighlightColor = rainbowColors[colorIndex]
-                print("Cor atual jogadores:", colorIndex, playerHighlightColor)
                 for _, otherPlayer in pairs(Players:GetPlayers()) do
                     if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("Highlight") then
                         otherPlayer.Character.Highlight.OutlineColor = playerHighlightColor
@@ -297,7 +315,6 @@ local function updatePlayerHighlightColor(colorName)
                 colorIndex = (colorIndex % #rainbowColors) + 1
                 task.wait(0.5)
             end
-            print("Ciclo Rainbow dos jogadores parado")
         end)()
     else
         if colorName == "Red" then
@@ -307,7 +324,6 @@ local function updatePlayerHighlightColor(colorName)
         elseif colorName == "Yellow" then
             playerHighlightColor = Color3.new(1, 1, 0)
         end
-        print("Aplicando cor fixa para jogadores:", playerHighlightColor)
         for _, otherPlayer in pairs(Players:GetPlayers()) do
             if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("Highlight") then
                 otherPlayer.Character.Highlight.OutlineColor = playerHighlightColor
@@ -319,10 +335,7 @@ end
 
 local function ativarESPPlayer()
     espAtivo = true
-    print("Ativando ESP para jogadores")
-    -- Usa a última cor selecionada ou o valor do dropdown
     local currentColor = redzlib.Flags["PlayerEspColor"] or lastPlayerColor or "Red"
-    print("Cor inicial dos jogadores:", currentColor)
     updatePlayerHighlightColor(currentColor)
     coroutine.wrap(function()
         while espAtivo do
@@ -359,7 +372,6 @@ end
 local function desativarESPPlayer()
     espAtivo = false
     playerRainbowLoopRunning = false
-    print("Desativando ESP para jogadores")
     for _, otherPlayer in pairs(Players:GetPlayers()) do
         if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("Highlight") then
             otherPlayer.Character.Highlight:Destroy()
@@ -398,22 +410,19 @@ local espadaESPAtivo = false
 local espadaHighlight = nil
 local maxDistance = 100000
 local espadaHighlightColor = Color3.new(1, 0, 0)
-local swordRainbowLoopRunning = false -- Controle do loop Rainbow para espada
-local lastSwordColor = "Red" -- Armazena a última cor selecionada para espada
+local swordRainbowLoopRunning = false
+local lastSwordColor = "Red"
 
 local function updateHighlightColor(colorName)
-    print("Atualizando cor da espada para:", colorName)
-    lastSwordColor = colorName -- Armazena a cor selecionada
-    swordRainbowLoopRunning = false -- Para qualquer loop Rainbow anterior
+    lastSwordColor = colorName
+    swordRainbowLoopRunning = false
 
     if colorName == "Rainbow" then
         swordRainbowLoopRunning = true
         coroutine.wrap(function()
-            print("Iniciando ciclo Rainbow para espada")
             local colorIndex = 1
             while espadaESPAtivo and swordRainbowLoopRunning do
                 espadaHighlightColor = rainbowColors[colorIndex]
-                print("Cor atual espada:", colorIndex, espadaHighlightColor)
                 if espadaHighlight and espadaHighlight.Adornee then
                     espadaHighlight.OutlineColor = espadaHighlightColor
                     espadaHighlight.FillColor = espadaHighlightColor
@@ -421,7 +430,6 @@ local function updateHighlightColor(colorName)
                 colorIndex = (colorIndex % #rainbowColors) + 1
                 task.wait(0.5)
             end
-            print("Ciclo Rainbow da espada parado")
         end)()
     else
         if colorName == "Red" then
@@ -431,7 +439,6 @@ local function updateHighlightColor(colorName)
         elseif colorName == "Yellow" then
             espadaHighlightColor = Color3.new(1, 1, 0)
         end
-        print("Aplicando cor fixa para espada:", espadaHighlightColor)
         if espadaHighlight and espadaHighlight.Adornee then
             espadaHighlight.OutlineColor = espadaHighlightColor
             espadaHighlight.FillColor = espadaHighlightColor
@@ -441,10 +448,7 @@ end
 
 local function ativarESPEspada()
     espadaESPAtivo = true
-    print("Ativando ESP para espada")
-    -- Usa a última cor selecionada ou o valor do dropdown
     local currentColor = redzlib.Flags["SwordEspColor"] or lastSwordColor or "Red"
-    print("Cor inicial da espada:", currentColor)
     updateHighlightColor(currentColor)
     coroutine.wrap(function()
         while espadaESPAtivo do
@@ -478,7 +482,6 @@ end
 local function desativarESPEspada()
     espadaESPAtivo = false
     swordRainbowLoopRunning = false
-    print("Desativando ESP para espada")
     if espadaHighlight then
         espadaHighlight:Destroy()
         espadaHighlight = nil
@@ -554,7 +557,6 @@ SettingsTab:AddDropdown({
     Flag = "TeleportMode",
     Callback = function(Value)
         getgenv().TeleportMode = Value
-        print("Modo de teleporte selecionado:", Value)
     end
 })
 
@@ -566,7 +568,6 @@ SettingsTab:AddSlider({
     Default = 100,
     Flag = "TweenSpeed",
     Callback = function(Value)
-        print("Velocidade do Tween: ", Value)
     end
 })
 
@@ -579,7 +580,6 @@ SettingsTab:AddToggle({
     Flag = "AntiVoid",
     Callback = function(Value)
         AntiVoidEnabled = Value
-        print(Value and "Anti-void ativado!" or "Anti-void desativado!")
     end
 })
 
