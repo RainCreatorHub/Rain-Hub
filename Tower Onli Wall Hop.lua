@@ -1,7 +1,3 @@
---[[ 
-    Library: Redz Library v5
-]]
-
 --== Inicialização ==--
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -523,6 +519,23 @@ espTab:AddDropdown({
     Flag = "SwordEspColor",
     Callback = function(Value)
         updateHighlightColor(Value)
+    end
+})
+
+local scriptTab = Window:MakeTab({"script", "box"})
+scriptTab:AddSection({"universal"})
+
+local executeButton = scriptTab:AddButton({
+    Title = "universal ( Infinite Yield )",
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    end
+})
+
+local executeButton = scriptTab:AddButton({
+    Title = "universal ( Nameless Admin )",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source.lua"))()
     end
 })
 
