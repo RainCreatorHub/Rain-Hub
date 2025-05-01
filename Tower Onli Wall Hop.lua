@@ -511,7 +511,7 @@ espTab:AddDropdown({
 })
 
 local scriptTab = Window:MakeTab({"script", "box"})
-scriptTab:AddSection({"script"})
+scriptTab:AddSection({"FE admin"})
 
 local executeButton = scriptTab:AddButton({
     Title = "universal ( Infinite Yield ) - ( FE )",
@@ -534,6 +534,7 @@ local executeButton = scriptTab:AddButton({
     end
 })
 
+scriptTab:AddSection({"FE hug"})
 local executeButton = scriptTab:AddButton({
     Title = "universal ( Hug ) - ( FE )",
     Callback = function()
