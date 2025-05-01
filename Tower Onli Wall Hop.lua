@@ -523,19 +523,33 @@ espTab:AddDropdown({
 })
 
 local scriptTab = Window:MakeTab({"script", "box"})
-scriptTab:AddSection({"universal"})
+scriptTab:AddSection({"script"})
 
 local executeButton = scriptTab:AddButton({
-    Title = "universal ( Infinite Yield )",
+    Title = "universal ( Infinite Yield ) - ( FE )",
     Callback = function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
     end
 })
 
 local executeButton = scriptTab:AddButton({
-    Title = "universal ( Nameless Admin )",
+    Title = "universal ( Nameless Admin ) - ( FE )",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source.lua"))()
+    end
+})
+
+local executeButton = scriptTab:AddButton({
+    Title = "universal ( Fly V3 ) - ( FE )",
+    Callback = function()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Gui-Fly-v3-37111"))()
+    end
+})
+
+local executeButton = scriptTab:AddButton({
+    Title = "universal ( Hug ) - ( FE )",
+    Callback = function()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-FE-HUG-R6-23876"))()
     end
 })
 
