@@ -68,20 +68,33 @@ InfoTab:AddParagraph({"Ui Library usada no código?", "Redz Library v5"})
 
 InfoTab:AddSection({"Links ( sociais )"})
 local CopyButton = InfoTab:AddButton({
-    Title = "Tiktok ( oficial )",
+    Title = "Tiktok ( oficial ) - ( Rain Creator )",
     Callback = function()
         setclipboard("https://www.tiktok.com/@rain_creator_hub?_t=ZS-8vxzg1IZuLZ&_r=1")
     end
 })
 
 local CopyButton = InfoTab:AddButton({
-    Title = "Tiktok ( oficial )",
+    Title = "Tiktok ( oficial ) - ( zaque_blox )",
     Callback = function()
         setclipboard("https://www.tiktok.com/@zaque_blox.ofc?_t=ZM-8vxzwlorCpL&_r=1")
     end
 })
 
-InfoTab:AddSection({"Links ( proximo update )"})
+InfoTab:AddSection({"Links ( Library )"})
+local CopyButton = InfoTab:AddButton({
+    Title = "Library ( Redz Library v5 )",
+    Callback = function()
+        setclipboard("https://github.com/zaque-blox/Redz-Library-")
+    end
+})
+
+local CopyButton = InfoTab:AddButton({
+    Title = "Library ( Rain Lib ) - ( Minha Ui Library )",
+    Callback = function()
+        setclipboard("https://github.com/RainCreatorHub/RainLib/blob/main/README.md")
+    end
+})
 
 -- Aba Principal
 local MainTab = Window:MakeTab({"Main", "Home"})
