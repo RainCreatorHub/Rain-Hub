@@ -49,3 +49,15 @@ ScriptTab:AddButton({
         JustABaseplate()
     end
 })
+
+local function FEuniversal()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/universal.lua"))()
+end
+
+-- Botão 
+ScriptTab:AddButton({
+    Title = "Rain hub ( universal ) - ( FE )",
+    Callback = function()
+        FEuniversal()
+    end
+})
