@@ -4,8 +4,6 @@ game.Players.LocalPlayer.Character["VANS_Umbrella"].Handle.Mesh:Destroy()
 game.Players.LocalPlayer.Character["Hat1"].Handle.Mesh:Destroy()
 game.Players.LocalPlayer.Character["Pal Hair"].Handle.Mesh:Destroy()
 
---reanimate by MyWorld#4430 discord.gg/pYVHtSJmEY
---DI3you is super gigachad 😳 follow him https://web.roblox.com/users/1538566712/profile
 		local v3_net, v3_808 = Vector3.new(20000, 20000, 20000), Vector3.new(8, 0, 8)
 		local function getNetlessVelocity(realPartVelocity)
 			local mag = realPartVelocity.Magnitude
@@ -18,10 +16,7 @@ game.Players.LocalPlayer.Character["Pal Hair"].Handle.Mesh:Destroy()
 			return v3_net + realPartVelocity * v3_808
 		end
 		local simradius = "shp" --simulation radius (net bypass) method
---simulation radius (net bypass) method
---"shp" - sethiddenproperty
---"ssr" - setsimulationradius
---false - disable
+
 local antiragdoll = true --removes hingeConstraints and ballSocketConstraints from your character
 local newanimate = true --disables the animate script and enables after reanimation
 local discharscripts = true --disables all localScripts parented to your character before reanimation
@@ -31,19 +26,8 @@ local humState16 = true --enables collisions for limbs before the humanoid dies 
 local addtools = false --puts all tools from backpack to character and lets you hold them after reanimation
 local hedafterneck = false --disable aligns for head and enable after neck is removed
 local loadtime = game:GetService("Players").RespawnTime + 0.5 --anti respawn delay
-local method = 0 --reanimation method
---methods:
---0 - breakJoints (takes [loadtime] seconds to laod)
---1 - limbs
---2 - limbs + anti respawn
---3 - limbs + breakJoints after [loadtime] seconds
---4 - remove humanoid + breakJoints
---5 - remove humanoid + limbs
-local alignmode = 3 --AlignPosition mode
---modes:
---1 - AlignPosition rigidity enabled true
---2 - 2 AlignPositions rigidity enabled both true and false
---3 - AlignPosition rigidity enabled false
+local method = 0
+local alignmode = 3
 
 healthHide = healthHide and ((method == 0) or (method == 2) or (method == 000)) and gp(c, "Head", "BasePart")
 
