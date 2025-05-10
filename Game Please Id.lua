@@ -6,7 +6,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 -- Criar GUI principal
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "CopyKeyGui"
+screenGui.Name = "KeySystemGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
 
@@ -81,13 +81,14 @@ settingsButton.MouseButton1Click:Connect(function()
 end)
 
 -- Caixa de texto com o código
+local originalCode = '_G.Key = "PASSWORD"\nloadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Game-Test/refs/heads/main/Key%20System"))()'
 local codeBox = Instance.new("TextBox")
 codeBox.Size = UDim2.new(0.9, 0, 0, 60)
-codeBox.Position = UDim2.new(0.05, 0, 0.35, 0)
+codeBox.Position = UDim2.new(0.05, 0, 0.25, 0)
 codeBox.TextWrapped = true
 codeBox.ClearTextOnFocus = false
-codeBox.TextEditable = false
-codeBox.Text = '_G.Key = "PASSWORD"\nloadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Game-Test/refs/heads/main/Key%20System"))()'
+codeBox.TextEditable = true -- Allow editing to detect changes
+codeBox.Text = originalCode
 codeBox.Font = Enum.Font.Code
 codeBox.TextSize = 16
 codeBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -99,14 +100,22 @@ local boxCorner = Instance.new("UICorner")
 boxCorner.CornerRadius = UDim.new(0, 8)
 boxCorner.Parent = codeBox
 
--- Botão de copiar
+-- Proteger o conteúdo da codeBox
+codeBox:GetPropertyChangedSignal("Text"):Connect(function()
+    if codeBox.Text ~= originalCode then
+        codeBox.Text = originalCode -- Restaurar o texto original
+        showConfirmation("Alteração Não Permitida!", Color3.fromRGB(255, 100, 100))
+    end
+end)
+
+-- Botão de copiar (azul)
 local copyButton = Instance.new("TextButton")
-copyButton.Size = UDim2.new(0.6, 0, 0, 35)
-copyButton.Position = UDim2.new(0.2, 0, 0.75, 0)
+copyButton.Size = UDim2.new(0.43, 0, 0, 35)
+copyButton.Position = UDim2.new(0.05, 0, 0.65, 0)
 copyButton.Text = "Copiar Script"
 copyButton.Font = Enum.Font.Gotham
 copyButton.TextSize = 18
-copyButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+copyButton.BackgroundColor3 = Color3.fromRGB(0, 150, 255) -- Blue
 copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 copyButton.Parent = frame
 
@@ -114,11 +123,26 @@ local copyCorner = Instance.new("UICorner")
 copyCorner.CornerRadius = UDim.new(0, 8)
 copyCorner.Parent = copyButton
 
+-- Botão "Get Key" (azul)
+local getKeyButton = Instance.new("TextButton")
+getKeyButton.Size = UDim2.new(0.43, 0, 0, 35)
+getKeyButton.Position = UDim2.new(0.52, 0, 0.65, 0)
+getKeyButton.Text = "Get Key"
+getKeyButton.Font = Enum.Font.Gotham
+getKeyButton.TextSize = 18
+getKeyButton.BackgroundColor3 = Color3.fromRGB(0, 150, 255) -- Blue
+getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+getKeyButton.Parent = frame
+
+local getKeyCorner = Instance.new("UICorner")
+getKeyCorner.CornerRadius = UDim.new(0, 8)
+getKeyCorner.Parent = getKeyButton
+
 -- Confirmação animada
 local confirmLabel = Instance.new("TextLabel")
 confirmLabel.Size = UDim2.new(1, 0, 0, 20)
 confirmLabel.Position = UDim2.new(0, 0, 1, -20)
-confirmLabel.Text = "Copiado!"
+confirmLabel.Text = ""
 confirmLabel.Font = Enum.Font.Gotham
 confirmLabel.TextSize = 14
 confirmLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
@@ -126,13 +150,14 @@ confirmLabel.BackgroundTransparency = 1
 confirmLabel.Visible = false
 confirmLabel.Parent = frame
 
-copyButton.MouseButton1Click:Connect(function()
-    setclipboard(codeBox.Text)
+-- Função para animação de confirmação
+local function showConfirmation(message, color)
+    confirmLabel.Text = message
+    confirmLabel.TextColor3 = color or Color3.fromRGB(0, 255, 100)
     confirmLabel.Visible = true
     confirmLabel.TextTransparency = 1
-    confirmLabel.Text = "Copiado!"
 
-    -- Animação
+    -- Animação de fade-in
     for i = 1, 10 do
         confirmLabel.TextTransparency = 1 - (i / 10)
         wait(0.02)
@@ -140,12 +165,25 @@ copyButton.MouseButton1Click:Connect(function()
 
     wait(1)
 
+    -- Animação de fade-out
     for i = 1, 10 do
         confirmLabel.TextTransparency = i / 10
         wait(0.02)
     end
 
     confirmLabel.Visible = false
+end
+
+-- Evento do botão de copiar
+copyButton.MouseButton1Click:Connect(function()
+    setclipboard(codeBox.Text)
+    showConfirmation("Script Copiado!")
+end)
+
+-- Evento do botão "Get Key"
+getKeyButton.MouseButton1Click:Connect(function()
+    setclipboard("https://🥶⃤.my.canva.site/key-system-1-2")
+    showConfirmation("Link Copiado!")
 end)
 
 -- Tema arco-íris dinâmico no título
