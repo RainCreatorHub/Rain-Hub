@@ -40,7 +40,7 @@ end
 function CheckQuest() 
     MyLevel = Plr.Data.Level.Value
     if World1 then
-        if MyLevel >= 1 and MyLevel <= 2603 then
+        if MyLevel >= 1 and MyLevel <= 9 then
             Mon = "Bandit"
             LevelQuest = 1
             NameQuest = "BanditQuest1"
