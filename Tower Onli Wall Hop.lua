@@ -252,6 +252,22 @@ TeleportTab:AddDropdown({
     end
 })
 
+-- stages...
+TeleportTab:AddDropdown({
+    Name = "stages",
+    Description = "Selecione o local para teleportar",
+    Options = {"nada ainda 1", "nada ainda 2"},
+    Default = nil,
+    Flag = "TeleportStages",
+    Callback = function(Value)
+        if Value == "nada ainda 1" then
+            print("olaa")
+        elseif Value == "nada ainda 2" then
+            print("ola")
+        end
+    end
+})
+
 -- Aba esp
 local espTab = Window:MakeTab({"esp", "Eye"})
 espTab:AddSection({"normal ( esp )"})
