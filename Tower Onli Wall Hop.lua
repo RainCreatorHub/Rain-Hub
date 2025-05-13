@@ -235,11 +235,12 @@ MainTab:AddToggle({
 local TeleportTab = Window:MakeTab({"Teleport", "Locate"})
 TeleportTab:AddSection({"Teleport"})
 
+-- locais
 TeleportTab:AddDropdown({
     Name = "Locate",
     Description = "Selecione o local para teleportar",
     Options = {"end", "sword", "spawn"},
-    Default = nil,
+    Default = "no locate",
     Flag = "TeleportLocation",
     Callback = function(Value)
         if Value == "end" then
@@ -256,14 +257,14 @@ TeleportTab:AddDropdown({
 TeleportTab:AddDropdown({
     Name = "stages",
     Description = "Selecione o local para teleportar",
-    Options = {"stage 1", "nada ainda 2"},
-    Default = nil,
-    Flag = "TeleportStages",
+    Options = {"stage 1", "stage 2"},
+    Default = "no stages",
+    Flag = "stagesTeleport",
     Callback = function(Value)
         if Value == "stage 1" then
             TeleportTo(Vector3.new(-22, 1435, 531))
-        elseif Value == "nada ainda 2" then
-            print("ola")
+        elseif Value == "stage 2" then
+            TeleportTo(Vector3.new(-22, 1440, 543)
         end
     end
 })
