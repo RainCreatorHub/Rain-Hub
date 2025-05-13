@@ -264,7 +264,7 @@ TeleportTab:AddDropdown({
         if Value == "stage 1" then
             TeleportTo(Vector3.new(-22, 1435, 531))
         elseif Value == "stage 2" then
-            TeleportTo(Vector3.new(-22, 1440, 543)
+            TeleportTo(Vector3.new(-22, 1440, 543))
         end
     end
 })
