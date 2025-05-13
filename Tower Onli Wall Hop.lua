@@ -256,12 +256,12 @@ TeleportTab:AddDropdown({
 TeleportTab:AddDropdown({
     Name = "stages",
     Description = "Selecione o local para teleportar",
-    Options = {"nada ainda 1", "nada ainda 2"},
+    Options = {"stage 1", "nada ainda 2"},
     Default = nil,
     Flag = "TeleportStages",
     Callback = function(Value)
-        if Value == "nada ainda 1" then
-            print("olaa")
+        if Value == "stage 1" then
+            TeleportTo(Vector3.new(-22, 1435, 531))
         elseif Value == "nada ainda 2" then
             print("ola")
         end
