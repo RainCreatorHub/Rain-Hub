@@ -50,6 +50,19 @@ ScriptTab:AddButton({
     end
 })
 
+local function Forsaken()
+  redzlib:Destroy()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Forsaken.lua"))()
+end
+
+-- Botão 
+ScriptTab:AddButton({
+    Title = "Rain hub ( forsaken )",
+    Callback = function()
+        Forsaken()
+    end
+})
+
 local function FEuniversal()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/universal.lua"))()
 end
