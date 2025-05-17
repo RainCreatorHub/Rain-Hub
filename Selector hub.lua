@@ -51,7 +51,6 @@ ScriptTab:AddButton({
 })
 
 local function Forsaken()
-  redzlib:Destroy()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Forsaken.lua"))()
 end
 
