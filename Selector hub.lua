@@ -50,15 +50,11 @@ ScriptTab:AddButton({
     end
 })
 
-local function Forsaken()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Forsaken.lua"))()
-end
-
 -- Botão 
 ScriptTab:AddButton({
-    Title = "Rain hub ( forsaken )",
+    Title = "Rain hub ( forsaken ) - ( FE ) - ( incompleto )",
     Callback = function()
-        Forsaken()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Forsaken.lua"))()
     end
 })
 
