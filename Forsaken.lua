@@ -1,4 +1,6 @@
-local OrionLibV2 = loadstring(game:HttpGet("https://pastebin.com/raw/7pirbSGM"))()
+-- Carrega a biblioteca OrionLibV2
+local p = "https://pastebin.com/raw/7pirbSGM"
+local OrionLibV2 = loadstring(game:HttpGet(p))()
 
 -- Criação da janela principal
 local window = OrionLibV2:MakeWindow({
@@ -13,21 +15,14 @@ local player = game.Players.LocalPlayer
 local infoTab = window:MakeTab({ Name = "Info" })
 local section = infoTab:AddSection({ Name = "info" })
 
-local label = infoTab:AddLabel({
+local Label = infoTab:AddLabel({
     Name = "Bem-vindo(a) " .. player.Name .. " ao Rain Hub para Forsaken!",
     Content = "Nome Bonito!"
 })
 
-local label = infoTab:AddLabel({
+local Label = infoTab:AddLabel({
     Name = "Idade da conta: " .. player.AccountAge,
     Content = "Ta velho(a) em kk"
-})
-
-local section = infoTab:AddSection({ Name = "creator" })
-
-local label = infoTab:AddLabel({
-    Name = "Membros: zaque_blox - ( titok )"
-    Content = "Infelizmente só eu..."
 })
 
 -- Aba: Main (reservada para futuras funcionalidades)
@@ -50,7 +45,7 @@ function GeneratorESP:checkProgress(generator)
             local bar = barUI:FindFirstChild("Bar")
             local background = barUI:FindFirstChild("Background")
             if bar and background then
-                return bar.Size.X.Scale >= (background.Size.X.Scale * 0.95) -- Se Bar estiver igual ou maior que 95% de Background
+                return bar.Size.X.Scale >= (background.Size.X.Scale * 0.95) -- Considera proximidade de 95%
             end
         end
     end
@@ -112,9 +107,9 @@ function GeneratorESP:stop()
     self.highlights = {}
 end
 
--- Toggle para ativar/desativar ESP de geradores
+-- Toggle para ativar/desativar ESP de Gerador (s)
 local Toggle = espTab:AddToggle({
-    Name = "Generator",
+    Name = "Generator (s)",
     Description = "Destaca geradores com ESP (verde para cheios, amarelo para não cheios)",
     Default = false,
     Callback = function(state)
@@ -127,7 +122,7 @@ local Toggle = espTab:AddToggle({
 })
 
 -- Módulo: ESP para Rigs (Survivors e Killers)
-local RigsESP = { running = false, highlights = {} }
+local RigsESP = { runningSurvivors = false, runningKillers = false, highlights = {} }
 
 -- Cria ou atualiza o highlight do rig
 function RigsESP:manageHighlight(model, cor)
@@ -144,67 +139,68 @@ function RigsESP:manageHighlight(model, cor)
     end
 end
 
--- Atualiza ESP de rigs
-function RigsESP:update()
-    for model, _ in pairs(self.highlights) do
-        if not model:IsDescendantOf(workspace) then
-            self.highlights[model]:Destroy()
-            self.highlights[model] = nil
-        end
-    end
-
-    local playersFolder = workspace:FindFirstChild("Players")
-    if not playersFolder then return end
-
-    local survivorsFolder = playersFolder:FindFirstChild("Survivors")
-    if survivorsFolder then
-        for _, model in ipairs(survivorsFolder:GetChildren()) do
-            if model:IsA("Model") and model:FindFirstChildWhichIsA("Humanoid") then
-                self:manageHighlight(model, Color3.fromRGB(0, 255, 0))
-            end
-        end
-    end
-
-    local killersFolder = playersFolder:FindFirstChild("Killers")
-    if killersFolder then
-        for _, model in ipairs(killersFolder:GetChildren()) do
-            if model:IsA("Model") and model:FindFirstChildWhichIsA("Humanoid") then
-                self:manageHighlight(model, Color3.fromRGB(255, 0, 0))
-            end
-        end
-    end
-end
-
--- Inicia ESP de rigs
-function RigsESP:start()
-    self.running = true
-    task.spawn(function()
-        while self.running do
-            self:update()
-            task.wait(0.5)
-        end
-    end)
-end
-
--- Para ESP de rigs
-function RigsESP:stop()
-    self.running = false
-    for _, highlight in pairs(self.highlights) do
-        highlight:Destroy()
-    end
-    self.highlights = {}
-end
-
--- Toggle para ativar/desativar ESP de survivors e killers
-local Toggle = espTab:AddToggle({
-    Name = "Survivors/Killers",
-    Description = "Destaca Survivors (verde) e Killers (vermelho)",
+-- Toggle para ativar/desativar ESP de Survivor (s)
+local ToggleSurvivors = espTab:AddToggle({
+    Name = "Survivor (s)",
+    Description = "Destaca Survivors (verde)",
     Default = false,
     Callback = function(state)
         if state then
-            RigsESP:start()
+            RigsESP.runningSurvivors = true
+            task.spawn(function()
+                while RigsESP.runningSurvivors do
+                    local survivorsFolder = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild("Survivors")
+                    if survivorsFolder then
+                        for _, model in ipairs(survivorsFolder:GetChildren()) do
+                            if model:IsA("Model") and model:FindFirstChildWhichIsA("Humanoid") then
+                                RigsESP:manageHighlight(model, Color3.fromRGB(0, 255, 0))
+                            end
+                        end
+                    end
+                    task.wait(0.5)
+                end
+            end)
         else
-            RigsESP:stop()
+            RigsESP.runningSurvivors = false
+            for obj, highlight in pairs(RigsESP.highlights) do
+                if highlight.FillColor == Color3.fromRGB(0, 255, 0) then
+                    highlight:Destroy()
+                    RigsESP.highlights[obj] = nil
+                end
+            end
+        end
+    end
+})
+
+-- Toggle para ativar/desativar ESP de Killer (s)
+local ToggleKillers = espTab:AddToggle({
+    Name = "Killer (s)",
+    Description = "Destaca Killers (vermelho)",
+    Default = false,
+    Callback = function(state)
+        if state then
+            RigsESP.runningKillers = true
+            task.spawn(function()
+                while RigsESP.runningKillers do
+                    local killersFolder = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild("Killers")
+                    if killersFolder then
+                        for _, model in ipairs(killersFolder:GetChildren()) do
+                            if model:IsA("Model") and model:FindFirstChildWhichIsA("Humanoid") then
+                                RigsESP:manageHighlight(model, Color3.fromRGB(255, 0, 0))
+                            end
+                        end
+                    end
+                    task.wait(0.5)
+                end
+            end)
+        else
+            RigsESP.runningKillers = false
+            for obj, highlight in pairs(RigsESP.highlights) do
+                if highlight.FillColor == Color3.fromRGB(255, 0, 0) then
+                    highlight:Destroy()
+                    RigsESP.highlights[obj] = nil
+                end
+            end
         end
     end
 })
