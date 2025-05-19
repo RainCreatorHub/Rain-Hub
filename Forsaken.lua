@@ -1,6 +1,4 @@
--- Carrega a biblioteca OrionLibV2
-local p = "https://pastebin.com/raw/7pirbSGM"
-local OrionLibV2 = loadstring(game:HttpGet(p))()
+local OrionLibV2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/RainLibV2/refs/heads/main/OrionLibV2.lua"))()
 
 -- Criação da janela principal
 local window = OrionLibV2:MakeWindow({
