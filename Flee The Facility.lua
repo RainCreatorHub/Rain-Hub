@@ -24,7 +24,7 @@ local Label1 = InfoTab:AddLabel({
 local MainTab = window:MakeTab({ Name = "Main" })
 local SectionMain = MainTab:AddSection({ Name = "Main" })
 local Label2 = MainTab:AddLabel({
-    Name = "ainda sendo feito ( depois de 1 atualização )",
+    Name = "ainda sendo feito ( próxima atualização )",
     Content = "to falando sério!"
 })
 
@@ -112,7 +112,7 @@ local freezerHighlights = {}
 
 local function UpdateFreezerHighlights()
     for _, pod in ipairs(Workspace:GetDescendants()) do
-        if pod.Name == "FreezePod" then
+        if pod.Name == "FreezePod" or pod.Name == "Freezer" or pod.Name == "Freeze" then
             if not freezerHighlights[pod] then
                 local hl = Instance.new("Highlight")
                 hl.Name = "FreezerESP"
@@ -120,7 +120,7 @@ local function UpdateFreezerHighlights()
                 hl.FillTransparency = 0.5
                 hl.OutlineTransparency = 0
                 hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                hl.Parent = tostring(pod)
+                hl.Parent = pod
                 freezerHighlights[pod] = hl
             end
 
@@ -417,7 +417,7 @@ end
 
 local toggleAutoInteract = ToolsTab:AddToggle({
     Name = "Auto Interact",
-    Description = "interagir sem parar!",
+    Description = "Automatically interacts with objects",
     Default = false,
     Callback = ToggleAutoInteract
 })
