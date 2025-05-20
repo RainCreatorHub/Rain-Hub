@@ -1,4 +1,5 @@
 local OrionLibV2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/OrionLibV2/refs/heads/main/OrionLibV2.lua"))()
+
 local window = OrionLibV2:MakeWindow({
     Title = "Rain hub | Flee The Facility",
     SubTitle = "by zaque_blox"
@@ -14,29 +15,23 @@ end
 
 -- Aba Info
 local InfoTab = window:MakeTab({ Name = "Info" })
-InfoTab:AddSection({ Name = "Info" })
-InfoTab:AddLabel({
+local SectionInfo = InfoTab:AddSection({ Name = "Info" })
+local Label1 = InfoTab:AddLabel({
     Name = "Bem vindo(a) " .. LocalPlayer.Name .. "!",
     Content = "obrigado por usar o Rain hub :D"
 })
 
 -- Aba Main
 local MainTab = window:MakeTab({ Name = "Main" })
-
-local setion = MainTab:AddSection({
-        Name = "Main"
-})
-
-local Label = MainTab:AddLabel({
-        Name = "ainda sendo feito ( depois de 2 atualizações )",
-        Content = "to falando sério!"
+local SectionMain = MainTab:AddSection({ Name = "Main" })
+local Label2 = MainTab:AddLabel({
+    Name = "ainda sendo feito ( depois de 1 atualização )",
+    Content = "to falando sério!"
 })
 
 -- Aba ESP
-local espTab = window:MakeTab({ Name = "esp" })
-local section = espTab:AddSection({
-        Name = "esp" 
-})
+local EspTab = window:MakeTab({ Name = "esp" })
+local SectionEsp = EspTab:AddSection({ Name = "esp" })
 
 -- ==== COMPUTERS ====
 _G.ComputersEspEvent = _G.ComputersEspEvent or Instance.new("BindableEvent")
@@ -99,7 +94,7 @@ local function ToggleComputersESP(val)
     end
 end
 
-local toggleComputers = espTab:AddToggle({
+local toggleComputers = EspTab:AddToggle({
     Name = "computers",
     Description = "destaca computadores em tempo real!",
     Default = false,
@@ -178,7 +173,7 @@ local function ToggleFreezerESP(val)
     end
 end
 
-local toggleFreezer = espTab:AddToggle({
+local toggleFreezer = EspTab:AddToggle({
     Name = "Freezer",
     Description = "Destaca os pods de congelamento",
     Default = false,
@@ -192,7 +187,7 @@ end)
 
 -- ==== EXIT DOORS ====
 local exitHighlights = {}
-local toggleExit = espTab:AddToggle({
+local toggleExit = EspTab:AddToggle({
     Name = "Exit Door",
     Description = "Destaca saídas com a cor amarelo",
     Default = false,
@@ -266,6 +261,8 @@ local function UpdatePlayerHighlights()
 end
 
 local playerEspRunning = false
+local function TogglePlayers
+local playerEspRunning = false
 local function TogglePlayersESP(val)
     _G.PlayersEspCount += val and 1 or -1
     _G.PlayersEspCount = math.max(0, _G.PlayersEspCount)
@@ -287,7 +284,7 @@ local function TogglePlayersESP(val)
     end
 end
 
-local togglePlayers = espTab:AddToggle({
+local togglePlayers = EspTab:AddToggle({
     Name = "Players",
     Description = "Destaca jogadores",
     Default = false,
@@ -301,8 +298,101 @@ end)
 
 -- Aba Tools
 local ToolsTab = window:MakeTab({ Name = "Tools" })
-local section = ToolsTab:AddSection({ Name = "Tools (survivor)" })
-local Label = ToolsTab:AddLabel({
-    Name = "ainda sendo feito ( próxima atualização )",
-    Content = "to falando sério!"
+local SectionTools = ToolsTab:AddSection({ Name = "survivor" })
+
+-- ==== ANTI FAIL ====
+_G.AntiFailEvent = _GAntiFailEvent or Instance.new("BindableEvent")
+_G.AntiFailCount = _G.AntiFailCount or 0
+local antiFailRunning = false
+
+local function NoFailLoop()
+    -- Uses the game's existing RemoteEvent in ReplicatedStorage, no custom RemoteEvent created
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
+    if not remote then
+        warn("Anti Fail: Game's RemoteEvent not found in ReplicatedStorage")
+        return
+    end
+    while _G.AntiFailCount > 0 do
+        local args = {
+            "SetPlayerMinigameResult",
+            true
+        }
+        remote:FireServer(unpack(args))
+        task.wait(0.1)
+    end
+end
+
+local function ToggleAntiFail(val)
+    _G.AntiFailCount += val and 1 or -1
+    _G.AntiFailCount = math.max(0, _G.AntiFailCount)
+    _G.AntiFailEvent:Fire(_G.AntiFailCount > 0)
+
+    if _G.AntiFailCount > 0 and not antiFailRunning then
+        antiFailRunning = true
+        task.spawn(NoFailLoop)
+    else
+        antiFailRunning = false
+    end
+end
+
+local toggleAntiFail = ToolsTab:AddToggle({
+    Name = "Anti Fail",
+    Description = "sem falhas",
+    Default = false,
+    Callback = ToggleAntiFail
 })
+
+_G.AntiFailEvent.Event:Connect(function(state)
+    if toggleAntiFail:Get() ~= state then
+        toggleAntiFail:Set(state)
+    end
+end)
+
+-- ==== AUTO INTERACT ====
+_G.AutoInteractEvent = _G.AutoInteractEvent or Instance.new("BindableEvent")
+_G.AutoInteractCount = _G.AutoInteractCount or 0
+local autoInteractRunning = false
+
+local function AutoInteractLoop()
+    -- Uses the game's existing RemoteEvent in ReplicatedStorage, no custom RemoteEvent created
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
+    if not remote then
+        warn("Auto Interact: Game's RemoteEvent not found in ReplicatedStorage")
+        return
+    end
+    while _G.AutoInteractCount > 0 do
+        local args = {
+            "Input",
+            "Action",
+            true
+        }
+        remote:FireServer(unpack(args))
+        task.wait(0.1)
+    end
+end
+
+local function ToggleAutoInteract(val)
+    _G.AutoInteractCount += val and 1 or -1
+    _G.AutoInteractCount = math.max(0, _G.AutoInteractCount)
+    _G.AutoInteractEvent:Fire(_G.AutoInteractCount > 0)
+
+    if _G.AutoInteractCount > 0 and not autoInteractRunning then
+        autoInteractRunning = true
+        task.spawn(AutoInteractLoop)
+    else
+        autoInteractRunning = false
+    end
+end
+
+local toggleAutoInteract = ToolsTab:AddToggle({
+    Name = "Auto Interact",
+    Description = "Automatically interacts with objects",
+    Default = false,
+    Callback = ToggleAutoInteract
+})
+
+_G.AutoInteractEvent.Event:Connect(function(state)
+    if toggleAutoInteract:Get() ~= state then
+        toggleAutoInteract:Set(state)
+    end
+end)
