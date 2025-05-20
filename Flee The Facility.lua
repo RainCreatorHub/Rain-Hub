@@ -1,5 +1,4 @@
 local OrionLibV2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/OrionLibV2/refs/heads/main/OrionLibV2.lua"))()
-
 local window = OrionLibV2:MakeWindow({
     Title = "Rain hub | Flee The Facility",
     SubTitle = "by zaque_blox"
@@ -121,7 +120,7 @@ local function UpdateFreezerHighlights()
                 hl.FillTransparency = 0.5
                 hl.OutlineTransparency = 0
                 hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                hl.Parent = pod
+                hl.Parent = tostring(pod)
                 freezerHighlights[pod] = hl
             end
 
@@ -186,35 +185,69 @@ _G.FreezerEspEvent.Event:Connect(function(state)
 end)
 
 -- ==== EXIT DOORS ====
+_G.ExitEspEvent = _G.ExitEspEvent or Instance.new("BindableEvent")
+_G.ExitEspCount = _G.ExitEspCount or 0
 local exitHighlights = {}
-local toggleExit = EspTab:AddToggle({
-    Name = "Exit Door",
-    Description = "Destaca saídas com a cor amarelo",
-    Default = false,
-    Callback = function(state)
-        if state then
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if obj.Name == "ExitDoor" then
-                    local hl = Instance.new("Highlight")
-                    hl.Name = "ExitESP"
-                    hl.Adornee = obj
-                    hl.FillColor = Color3.fromRGB(255, 255, 0)
-                    hl.OutlineColor = Color3.fromRGB(255, 255, 0)
-                    hl.FillTransparency = 0.5
-                    hl.OutlineTransparency = 0
-                    hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                    hl.Parent = obj
-                    exitHighlights[obj] = hl
-                end
+
+local function UpdateExitHighlights()
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        if obj.Name == "ExitDoor" then
+            if not exitHighlights[obj] then
+                local hl = Instance.new("Highlight")
+                hl.Name = "ExitESP"
+                hl.Adornee = obj
+                hl.FillColor = Color3.fromRGB(255, 255, 0)
+                hl.OutlineColor = Color3.fromRGB(255, 255, 0)
+                hl.FillTransparency = 0.5
+                hl.OutlineTransparency = 0
+                hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                hl.Parent = obj
+                exitHighlights[obj] = hl
             end
-        else
+        end
+    end
+
+    for obj, hl in pairs(exitHighlights) do
+        if not obj:IsDescendantOf(Workspace) then
+            hl:Destroy()
+            exitHighlights[obj] = nil
+        end
+    end
+end
+
+local exitRunning = false
+local function ToggleExitESP(val)
+    _G.ExitEspCount += val and 1 or -1
+    _G.ExitEspCount = math.max(0, _G.ExitEspCount)
+    _G.ExitEspEvent:Fire(_G.ExitEspCount > 0)
+
+    if _G.ExitEspCount > 0 and not exitRunning then
+        exitRunning = true
+        task.spawn(function()
+            while _G.ExitEspCount > 0 do
+                UpdateExitHighlights()
+                task.wait(0.5)
+            end
             for _, hl in pairs(exitHighlights) do
                 hl:Destroy()
             end
             table.clear(exitHighlights)
-        end
+            exitRunning = false
+        end)
     end
+end
+
+local toggleExit = EspTab:AddToggle({
+    Name = "Exit Door",
+    Description = "Destaca saídas com a cor amarelo",
+    Default = false,
+    Callback = ToggleExitESP
 })
+_G.ExitEspEvent.Event:Connect(function(state)
+    if toggleExit:Get() ~= state then
+        toggleExit:Set(state)
+    end
+end)
 
 -- ==== PLAYERS ====
 _G.PlayersEspEvent = _G.PlayersEspEvent or Instance.new("BindableEvent")
@@ -261,8 +294,6 @@ local function UpdatePlayerHighlights()
 end
 
 local playerEspRunning = false
-local function TogglePlayers
-local playerEspRunning = false
 local function TogglePlayersESP(val)
     _G.PlayersEspCount += val and 1 or -1
     _G.PlayersEspCount = math.max(0, _G.PlayersEspCount)
@@ -301,7 +332,7 @@ local ToolsTab = window:MakeTab({ Name = "Tools" })
 local SectionTools = ToolsTab:AddSection({ Name = "survivor" })
 
 -- ==== ANTI FAIL ====
-_G.AntiFailEvent = _GAntiFailEvent or Instance.new("BindableEvent")
+_G.AntiFailEvent = _G.AntiFailEvent or Instance.new("BindableEvent")
 _G.AntiFailCount = _G.AntiFailCount or 0
 local antiFailRunning = false
 
@@ -386,7 +417,7 @@ end
 
 local toggleAutoInteract = ToolsTab:AddToggle({
     Name = "Auto Interact",
-    Description = "Automatically interacts with objects",
+    Description = "interagir sem parar!",
     Default = false,
     Callback = ToggleAutoInteract
 })
