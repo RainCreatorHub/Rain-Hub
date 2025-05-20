@@ -17,7 +17,7 @@ local InfoTab = window:MakeTab({ Name = "Info" })
 InfoTab:AddSection({ Name = "Info" })
 InfoTab:AddLabel({
     Name = "Bem vindo(a) " .. LocalPlayer.Name .. "!",
-    Content = " "
+    Content = "obrigado por usar o Rain hub :D"
 })
 
 -- Aba Main
