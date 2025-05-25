@@ -5,15 +5,8 @@ if Games then
         if PlaceID == game.PlaceId then
             loadstring(game:HttpGet(Execute))()
         end
-        if not PlaceID == game.PlaceId then
-            print("entre em 1 jogo que esteja na lista!")
-        end
     end
 
-if Games then
-  print("carregando...")
-end
-
 if not Games then
-  print("erro ao carregar...")
+  primt("erro ao carregar...")
 end
