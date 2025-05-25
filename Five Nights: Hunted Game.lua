@@ -1,1 +1,0 @@
-print("esta no jogo!")
