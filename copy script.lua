@@ -5,6 +5,9 @@ if Games then
         if PlaceID == game.PlaceId then
             loadstring(game:HttpGet(Execute))()
         end
+        if not PlaceID == game.PlaceId then
+            print("entre em 1 jogo que esteja na lista!")
+        end
     end
 
 if Games then
@@ -12,5 +15,5 @@ if Games then
 end
 
 if not Games then
-  print("erro ao carregar ou entre no jogo certo")
+  print("erro ao carregar...")
 end
