@@ -3,7 +3,7 @@ local OrionLibV2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ra
 local window = OrionLibV2:MakeWindow({
     Title = "Rain hub | Five Nights: Hunted",
     SubTitle = "by zaque_blox"
-}(
+})
 
 local InfoTab = window:MakeTab({
     Name = "Info"
