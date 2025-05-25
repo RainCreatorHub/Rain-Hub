@@ -9,11 +9,11 @@ local InfoTab = window:MakeTab({
     Name = "Info"
 })
 
-local InfoSection = InfoTab:AddSection({
+local Info = InfoTab:AddSection({
     Name = "Info"
 })
 
-local NilLabel = InfoTab:AddLabel({
+local Incompleto = InfoTab:AddLabel({
     Name = "Esta incompleto",
     Content = "sera feito em breve!"
 })
