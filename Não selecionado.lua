@@ -1,7 +1,7 @@
 local OrionLibV2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/OrionLibV2/refs/heads/main/OrionLibV2.lua"))()
 
 local window = OrionLibV2:MakeWindow({
-    Title = "Rain hub | Five Nights: Hunted",
+    Title = "Rain hub | nenhum jogo!",
     SubTitle = "by zaque_blox"
 })
 
