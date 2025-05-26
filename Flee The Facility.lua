@@ -12,7 +12,7 @@ local function isValidModel(obj)
     return obj:IsA("Model") and obj:FindFirstChildWhichIsA("Humanoid") and obj:FindFirstChild("HumanoidRootPart")
 end
 
--- Aba Info
+-- Info Tab
 local InfoTab = window:MakeTab({ Name = "Info" })
 local SectionInfo = InfoTab:AddSection({ Name = "Info" })
 local Label1 = InfoTab:AddLabel({
@@ -20,19 +20,185 @@ local Label1 = InfoTab:AddLabel({
     Content = "obrigado por usar o Rain hub :D"
 })
 
--- Aba Main
+-- Main Tab
 local MainTab = window:MakeTab({ Name = "Main" })
-local SectionMain = MainTab:AddSection({ Name = "Main" })
-local Label2 = MainTab:AddLabel({
-    Name = "ainda sendo feito ( próxima atualização )",
-    Content = "to falando sério!"
+
+local SectionMain = MainTab:AddSection({ Name = "Survivor ( próximo update )" })
+
+local SectionMain = MainTab:AddSection({ Name = "Beast" })
+
+-- Kill All Button
+local function KillAll()
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
+    if not remote then return end
+
+    local character = LocalPlayer.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+    local originalPosition = character.HumanoidRootPart.Position
+
+    local closestPlayer, closestDistance = nil, math.huge
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
+            local distance = (character.HumanoidRootPart.Position - plr.Character.HumanoidRootPart.Position).Magnitude
+            if distance < closestDistance then
+                closestPlayer = plr
+                closestDistance = distance
+            end
+        end
+    end
+
+    if not closestPlayer then return end
+
+    character.HumanoidRootPart.CFrame = closestPlayer.Character.HumanoidRootPart.CFrame
+    task.wait(0.1)
+    remote:FireServer("Input", "Attack", true)
+    task.wait(0.1)
+
+    local nearestPod, nearestDistance = nil, math.huge
+    for _, pod in ipairs(Workspace:GetDescendants()) do
+        if pod.Name == "FreezePod" and pod:IsA("BasePart") then
+            local isOccupied = false
+            local podPos = pod.Position
+            for _, plr in ipairs(Players:GetPlayers()) do
+                if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
+                    local distance = (podPos - plr.Character.HumanoidRootPart.Position).Magnitude
+                    if distance < 5 then
+                        isOccupied = true
+                        break
+                    end
+                end
+            end
+            if not isOccupied then
+                local distance = (character.HumanoidRootPart.Position - podPos).Magnitude
+                if distance < nearestDistance then
+                    nearestPod = pod
+                    nearestDistance = distance
+                end
+            end
+        end
+    end
+
+    if not nearestPod then
+        character.HumanoidRootPart.Position = originalPosition
+        return
+    end
+
+    character.HumanoidRootPart.CFrame = CFrame.new(nearestPod.Position)
+    task.wait(0.1)
+    remote:FireServer("Input", "Action", true)
+    task.wait(0.1)
+    character.HumanoidRootPart.Position = originalPosition
+end
+
+MainTab:AddButton({
+    Name = "Kill all ( beta ) - ( bug ) - incompleto )",
+    Callback = KillAll
 })
 
--- Aba ESP
+-- Auto Kill All Toggle
+_G.AutoKillAllEvent = _G.AutoKillAllEvent or Instance.new("BindableEvent")
+_G.AutoKillAllCount = _G.AutoKillAllCount or 0
+local autoKillAllRunning = false
+
+local function AutoKillAllLoop()
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
+    if not remote then return end
+
+    while _G.AutoKillAllCount > 0 do
+        local character = LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local originalPosition = character.HumanoidRootPart.Position
+
+            local closestPlayer, closestDistance = nil, math.huge
+            for _, plr in ipairs(Players:GetPlayers()) do
+                if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
+                    local distance = (character.HumanoidRootPart.Position - plr.Character.HumanoidRootPart.Position).Magnitude
+                    if distance < closestDistance then
+                        closestPlayer = plr
+                        closestDistance = distance
+                    end
+                end
+            end
+
+            if closestPlayer then
+                character.HumanoidRootPart.CFrame = closestPlayer.Character.HumanoidRootPart.CFrame
+                task.wait(0.1)
+                remote:FireServer("Input", "Attack", true)
+                task.wait(0.1)
+
+                local nearestPod, nearestDistance = nil, math.huge
+                for _, pod in ipairs(Workspace:GetDescendants()) do
+                    if pod.Name == "FreezePod" and pod:IsA("BasePart") then
+                        local isOccupied = false
+                        local podPos = pod.Position
+                        for _, plr in ipairs(Players:GetPlayers()) do
+                            if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
+                                local distance = (podPos - plr.Character.HumanoidRootPart.Position).Magnitude
+                                if distance < 5 then
+                                    isOccupied = true
+                                    break
+                                end
+                            end
+                        end
+                        if not isOccupied then
+                            local distance = (character.HumanoidRootPart.Position - podPos).Magnitude
+                            if distance < nearestDistance then
+                                nearestPod = pod
+                                nearestDistance = distance
+                            end
+                        end
+                    end
+                end
+
+                if nearestPod then
+                    character.HumanoidRootPart.CFrame = CFrame.new(nearestPod.Position)
+                    task.wait(0.1)
+                    remote:FireServer("Input", "Action", true)
+                    task.wait(0.1)
+                end
+
+                character.HumanoidRootPart.Position = originalPosition
+            end
+
+            task.wait(0.5)
+        else
+            task.wait(1)
+        end
+    end
+end
+
+local function ToggleAutoKillAll(val)
+    _G.AutoKillAllCount += val and 1 or -1
+    _G.AutoKillAllCount = math.max(0, _G.AutoKillAllCount)
+    _G.AutoKillAllEvent:Fire(_G.AutoKillAllCount > 0)
+
+    if _G.AutoKillAllCount > 0 and not autoKillAllRunning then
+        autoKillAllRunning = true
+        task.spawn(AutoKillAllLoop)
+    else
+        autoKillAllRunning = false
+    end
+end
+
+local toggleAutoKillAll = MainTab:AddToggle({
+    Name = "Auto Kill all ( beta ) - ( bug ) - incompleto )",
+    Description = "mate todos se for a besta",
+    Default = false,
+    Callback = ToggleAutoKillAll
+})
+
+_G.AutoKillAllEvent.Event:Connect(function(state)
+    if toggleAutoKillAll:Get() ~= state then
+        toggleAutoKillAll:Set(state)
+    end
+end)
+
+-- ESP Tab
 local EspTab = window:MakeTab({ Name = "esp" })
 local SectionEsp = EspTab:AddSection({ Name = "esp" })
 
--- ==== COMPUTERS ====
+-- Computers ESP
 _G.ComputersEspEvent = _G.ComputersEspEvent or Instance.new("BindableEvent")
 _G.ComputersEspCount = _G.ComputersEspCount or 0
 local computerHighlights = {}
@@ -95,7 +261,7 @@ end
 
 local toggleComputers = EspTab:AddToggle({
     Name = "computers",
-    Description = "destaca computadores em tempo real!",
+    Description = "destaca os computadores",
     Default = false,
     Callback = ToggleComputersESP
 })
@@ -105,7 +271,7 @@ _G.ComputersEspEvent.Event:Connect(function(state)
     end
 end)
 
--- ==== FREEZER ====
+-- Freezer ESP
 _G.FreezerEspEvent = _G.FreezerEspEvent or Instance.new("BindableEvent")
 _G.FreezerEspCount = _G.FreezerEspCount or 0
 local freezerHighlights = {}
@@ -174,7 +340,7 @@ end
 
 local toggleFreezer = EspTab:AddToggle({
     Name = "Freezer",
-    Description = "Destaca os pods de congelamento",
+    Description = "destaca os freezers",
     Default = false,
     Callback = ToggleFreezerESP
 })
@@ -184,7 +350,7 @@ _G.FreezerEspEvent.Event:Connect(function(state)
     end
 end)
 
--- ==== EXIT DOORS ====
+-- Exit Doors ESP
 _G.ExitEspEvent = _G.ExitEspEvent or Instance.new("BindableEvent")
 _G.ExitEspCount = _G.ExitEspCount or 0
 local exitHighlights = {}
@@ -239,7 +405,7 @@ end
 
 local toggleExit = EspTab:AddToggle({
     Name = "Exit Door",
-    Description = "Destaca saídas com a cor amarelo",
+    Description = "destaca as saídas",
     Default = false,
     Callback = ToggleExitESP
 })
@@ -249,7 +415,7 @@ _G.ExitEspEvent.Event:Connect(function(state)
     end
 end)
 
--- ==== PLAYERS ====
+-- Players ESP
 _G.PlayersEspEvent = _G.PlayersEspEvent or Instance.new("BindableEvent")
 _G.PlayersEspCount = _G.PlayersEspCount or 0
 local playerHighlights = {}
@@ -317,7 +483,7 @@ end
 
 local togglePlayers = EspTab:AddToggle({
     Name = "Players",
-    Description = "Destaca jogadores",
+    Description = "destaca os players ( beast ) - ( survivors )",
     Default = false,
     Callback = TogglePlayersESP
 })
@@ -327,22 +493,18 @@ _G.PlayersEspEvent.Event:Connect(function(state)
     end
 end)
 
--- Aba Tools
+-- Tools Tab
 local ToolsTab = window:MakeTab({ Name = "Tools" })
 local SectionTools = ToolsTab:AddSection({ Name = "survivor" })
 
--- ==== ANTI FAIL ====
+-- Anti Fail
 _G.AntiFailEvent = _G.AntiFailEvent or Instance.new("BindableEvent")
 _G.AntiFailCount = _G.AntiFailCount or 0
 local antiFailRunning = false
 
 local function NoFailLoop()
-    -- Uses the game's existing RemoteEvent in ReplicatedStorage, no custom RemoteEvent created
     local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
-    if not remote then
-        warn("Anti Fail: Game's RemoteEvent not found in ReplicatedStorage")
-        return
-    end
+    if not remote then return end
     while _G.AntiFailCount > 0 do
         local args = {
             "SetPlayerMinigameResult",
@@ -368,7 +530,7 @@ end
 
 local toggleAntiFail = ToolsTab:AddToggle({
     Name = "Anti Fail",
-    Description = "sem falhas",
+    Description = "Não falhe em computadores mas aperte o botão "e"",
     Default = false,
     Callback = ToggleAntiFail
 })
@@ -379,18 +541,14 @@ _G.AntiFailEvent.Event:Connect(function(state)
     end
 end)
 
--- ==== AUTO INTERACT ====
+-- Auto Interact
 _G.AutoInteractEvent = _G.AutoInteractEvent or Instance.new("BindableEvent")
 _G.AutoInteractCount = _G.AutoInteractCount or 0
 local autoInteractRunning = false
 
 local function AutoInteractLoop()
-    -- Uses the game's existing RemoteEvent in ReplicatedStorage, no custom RemoteEvent created
     local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
-    if not remote then
-        warn("Auto Interact: Game's RemoteEvent not found in ReplicatedStorage")
-        return
-    end
+    if not remote then return end
     while _G.AutoInteractCount > 0 do
         local args = {
             "Input",
@@ -417,7 +575,7 @@ end
 
 local toggleAutoInteract = ToolsTab:AddToggle({
     Name = "Auto Interact",
-    Description = "Automatically interacts with objects",
+    Description = "interação automática",
     Default = false,
     Callback = ToggleAutoInteract
 })
