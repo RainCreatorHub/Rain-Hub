@@ -2624,7 +2624,7 @@ local Section = W:AddSection({
     Name = "Update"
 })
 
-W:AddLabel("[+] Sla Hub is HERE!")
+W:AddLabel("[+] Rain Hub is HERE!")
 W:AddLabel("[+] Best AutoFarm!")
 W:AddLabel("[+] Up and Growing")
 W:AddLabel("[+] Smooth")
