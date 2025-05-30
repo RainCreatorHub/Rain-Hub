@@ -82,6 +82,7 @@ end
 local autoGetBallToggle = Tabs.Main:AddToggle("AutoGetBall", {
     Title = "Auto Get Ball",
     Default = false,
+    Flag = "Auto Get Ball",
     Description = "Pega a bola se teleportando."
 })
 
@@ -136,6 +137,7 @@ end)
 local autoGoalToggle = Tabs.Main:AddToggle("AutoGoal", {
     Title = "Auto Goal",
     Default = false,
+    Flag = "Auto Goal",
     Description = "Teleporte-se para o gol"
 })
 
@@ -177,8 +179,8 @@ InterfaceManager:SetLibrary(Fluent)
 
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({})
-InterfaceManager:SetFolder("Rain Blue Lock: Rivals | InterfaceManager")
-SaveManager:SetFolder("FluentScriptHub/Rain Blue Lock: Rivals | SaveManager")
+InterfaceManager:SetFolder("Rain Blue Lock Rivals InterfaceManager")
+SaveManager:SetFolder("FluentScriptHub/Rain Blue Lock Rivals SaveManager")
 InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 
