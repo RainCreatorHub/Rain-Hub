@@ -5,6 +5,7 @@ local Games = {
   [17574618959] = "https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Just%20a%20Baseplate%20Select.lua", -- Just a Baseplate 
   [18668065416] = "https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Blue%20lock%3A%20Rivals.lua", -- Blue lock: Rivals
   [135456035952103] = "https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Blue%20lock%3A%20Rivals.lua", -- Blue lock: Rivals ( Ego Event )
+  [92517437168342] = "https://raw.githubusercontent.com/RainCreatorHub/Rain-Hub/refs/heads/main/Blue%20lock%3A%20Rivals.lua", -- Blue lock: Rivals ( Customs )
 }
 
 return Games
