@@ -14,22 +14,53 @@ local infoTab = window:MakeTab({ Name = "Info" })
 local section = infoTab:AddSection({ Name = "info" })
 
 local Label = infoTab:AddLabel({
-    Name = "Bem-vindo(a) " .. player.Name .. " ao Rain Hub para Forsaken!",
+    Name = "Bem-vindo(a) " .. player.Name .. "!",
     Content = "Nome Bonito!"
 })
 
+local mensagem
+    if player.AccountAge >= 1825 then
+        mensagem = "5 anos de conta... parabéns guerreiro :D"
+    elseif player.AccountAge >= 1460 then
+        mensagem = "4 anos de conta... parabéns :D"
+    elseif player.AccountAge >= 1095 then
+        mensagem = "3 anos de conta... parabéns :D"
+    elseif player.AccountAge >= 730 then
+        mensagem = "2 anos de conta... parabéns :D"
+    elseif player.AccountAge >= 365 then
+        mensagem = "1 ano de conta... parabéns :D"
+    elseif player.AccountAge <= 199 then
+        mensagem = "está novo(a) ainda :D"
+    else
+        mensagem = "quase 1 ano, continua firme! :D"
+    end
 local Label = infoTab:AddLabel({
-    Name = "Idade da conta: " .. player.AccountAge,
-    Content = "Ta velho(a) em kk"
+    Name = "Idade da conta: " .. player.AccountAge .. " dias",
+    Content = mensagem
 })
+
 
 local section = infoTab:AddSection({ Name = "Update" })
 local Label = infoTab:AddLabel({
-    Name = "Added: esp killer/survivor"
-    Content = " "
+    Name = "Added: esp killer / survivor",
+    Content = "destaca o assassino ou sobrevivente"
 })
 
+local section = infoTab:AddSection({ Name = "future update" })
+local Label = infoTab:AddLabel({
+    Name = "Toggle: Auto Generator",
+    Content = "anda até o gerador e completa não se mova!"
+})
 
+local Label = infoTab:AddLabel({
+    Name = "Button: finish generator",
+    Content = "Termina o gerador pode se mover"
+})
+
+local Label = infoTab:AddLabel({
+    Name = "Working? / Trabalhando?",
+    Content = "Not yet / Ainda Não"
+})
 
 -- Aba: Main (reservada para futuras funcionalidades)
 local mainTab = window:MakeTab({ Name = "Main" })
