@@ -23,6 +23,14 @@ local Label = infoTab:AddLabel({
     Content = "Ta velho(a) em kk"
 })
 
+local section = infoTab:AddSection({ Name = "Update" })
+local Label = infoTab:AddLabel({
+    Name = "Added: esp killer/survivor"
+    Content = " "
+})
+
+
+
 -- Aba: Main (reservada para futuras funcionalidades)
 local mainTab = window:MakeTab({ Name = "Main" })
 local section = mainTab:AddSection({ Name = "Main" })
