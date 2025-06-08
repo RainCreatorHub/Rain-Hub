@@ -20,7 +20,7 @@ local Label = infoTab:AddLabel({
 
 local mensagem
     if player.AccountAge >= 1825 then
-        mensagem = "5 anos de conta... parabéns guerreiro :D"
+        mensagem = "5 anos de conta... parabéns guerreiro(a) :D"
     elseif player.AccountAge >= 1460 then
         mensagem = "4 anos de conta... parabéns :D"
     elseif player.AccountAge >= 1095 then
@@ -29,10 +29,14 @@ local mensagem
         mensagem = "2 anos de conta... parabéns :D"
     elseif player.AccountAge >= 365 then
         mensagem = "1 ano de conta... parabéns :D"
-    elseif player.AccountAge <= 199 then
+    elseif player.AccountAge >= 250 then
         mensagem = "quase 1 ano, continua firme! :D"
-    elseif player.AccountAge >= 0 then
+    elseif player.AccountAge >= 150 then
+        mensagem = "Ainda esta novo(a) :D"
+    elseif player.AccountAge >= 50 then
         mensagem = "está novo(a) ainda :D"
+    else
+        mensagem = "Começou agora?"
     end
 local Label = infoTab:AddLabel({
     Name = "Idade da conta: " .. player.AccountAge .. " dias",
