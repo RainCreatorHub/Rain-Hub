@@ -30,9 +30,9 @@ local mensagem
     elseif player.AccountAge >= 365 then
         mensagem = "1 ano de conta... parabéns :D"
     elseif player.AccountAge <= 199 then
-        mensagem = "está novo(a) ainda :D"
-    else
         mensagem = "quase 1 ano, continua firme! :D"
+    elseif player.AccountAge >= 0 then
+        mensagem = "está novo(a) ainda :D"
     end
 local Label = infoTab:AddLabel({
     Name = "Idade da conta: " .. player.AccountAge .. " dias",
@@ -147,7 +147,7 @@ end
 -- Toggle para ativar/desativar ESP de Gerador (s)
 local Toggle = espTab:AddToggle({
     Name = "Generator (s)",
-    Description = "Destaca geradores com ESP (verde para cheios, amarelo para não cheios)",
+    Description = "Destaca os geradores",
     Default = false,
     Callback = function(state)
         if state then
@@ -179,7 +179,7 @@ end
 -- Toggle para ativar/desativar ESP de Survivor (s)
 local ToggleSurvivors = espTab:AddToggle({
     Name = "Survivor (s)",
-    Description = "Destaca Survivors (verde)",
+    Description = "Destaca os Survivors",
     Default = false,
     Callback = function(state)
         if state then
@@ -212,7 +212,7 @@ local ToggleSurvivors = espTab:AddToggle({
 -- Toggle para ativar/desativar ESP de Killer (s)
 local ToggleKillers = espTab:AddToggle({
     Name = "Killer (s)",
-    Description = "Destaca Killers (vermelho)",
+    Description = "Destaca o Killer",
     Default = false,
     Callback = function(state)
         if state then
