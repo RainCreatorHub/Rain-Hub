@@ -63,13 +63,40 @@ local Label = infoTab:AddLabel({
 
 local Label = infoTab:AddLabel({
     Name = "Working? / Trabalhando?",
-    Content = "Not yet / Ainda Não"
+    Content = "Yes / sim / updated today. / atualizado hoje."
+})
+
+local Label = infoTab:AddLabel({
+    Name = "Update day",
+    Content = "sem data"
 })
 
 -- Aba: Main (reservada para futuras funcionalidades)
 local mainTab = window:MakeTab({ Name = "Main" })
 local section = mainTab:AddSection({ Name = "Main" })
 
+local Button = mainTab:AddButton({
+    Name = "finish generator",
+    Callback = function()
+        local map = workspace:WaitForChild("Map", 9e9)
+local ingame = map:WaitForChild("Ingame", 9e9)
+local mapInside = ingame:WaitForChild("Map", 9e9)
+
+for _, child in ipairs(mapInside:GetChildren()) do
+    local remotes = child:FindFirstChild("Remotes")
+    local remoteEvent = remotes and remotes:FindFirstChild("RE")
+
+    if remoteEvent and remoteEvent:IsA("RemoteEvent") then
+        remoteEvent:FireServer(unpack({}))
+    end
+       end
+    end
+})
+
+local Label = infoTab:AddLabel({
+    Name = "finish generator | Button",
+    Content = "spam = kick or ban"
+})
 -- Aba: ESP
 local espTab = window:MakeTab({ Name = "esp" })
 local section = espTab:AddSection({ Name = "esp" })
