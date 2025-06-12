@@ -93,7 +93,7 @@ for _, child in ipairs(mapInside:GetChildren()) do
     end
 })
 
-local Label = infoTab:AddLabel({
+local Label = mainTab:AddLabel({
     Name = "finish generator | Button",
     Content = "spam = kick or ban"
 })
