@@ -46,8 +46,8 @@ local Label = infoTab:AddLabel({
 
 local section = infoTab:AddSection({ Name = "Update" })
 local Label = infoTab:AddLabel({
-    Name = "Added: esp killer / survivor",
-    Content = "destaca o assassino ou sobrevivente"
+    Name = "Added: Button | finish generator",
+    Content = "Termina o gerador"
 })
 
 local section = infoTab:AddSection({ Name = "future update" })
