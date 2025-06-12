@@ -57,11 +57,6 @@ local Label = infoTab:AddLabel({
 })
 
 local Label = infoTab:AddLabel({
-    Name = "Button: finish generator",
-    Content = "Termina o gerador pode se mover"
-})
-
-local Label = infoTab:AddLabel({
     Name = "Working? / Trabalhando?",
     Content = "Yes / sim / updated today. / atualizado hoje."
 })
