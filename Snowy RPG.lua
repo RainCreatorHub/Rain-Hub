@@ -48,7 +48,7 @@ local function getLevelData()
 		MonCframe = CFrame.new(-11, 26, 26)
 	elseif level >= 65 then
 		MonName = "OscarFishBeta"
-		MonCframe = CFrame.new(389, -276, 628)
+		MonCframe = CFrame.new(394, -275, 648)
 	end
 
 	return MonName, MonCframe
@@ -103,6 +103,15 @@ end)
 local Toggle = MainTab:AddToggle({
     Name = "Auto Farm Level",
     Default = false,
-    Callback = _G.AutoFarmLevel(Value)
+    Callback = function(Value)
+    _G.AutoFarmLevel = Value
+    if Value then
+      _G.AutoFarmLevel = Value
     end
+    if Value then
+    while Value do
+     game:GetService("ReplicatedStorage"):WaitForChild("M1PumpkinDeluxeEvent"):FireServer()
+     wait()
+   end
+  end
 })
