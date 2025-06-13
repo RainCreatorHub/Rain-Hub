@@ -1,6 +1,6 @@
 local RainLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/OrionLibV2/refs/heads/main/OrionLibV2.lua"))()
 
-local Window = OrionLib:MakeWindow({
+local Window = RainLib:MakeWindow({
     Title = "Rain hub | Snowy RPG",
     SubTitle = "by zaque_blox"
 })
@@ -15,14 +15,13 @@ local section = MainTab:AddSection({
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local hrp = character:WaitForChild("HumanoidRootPart")
+local hrp = player.Character or player.CharacterAdded:Wait()
+hrp = hrp:WaitForChild("HumanoidRootPart")
 
 _G.AutoFarmLevel = false
-local tweening = false
+local isRunning = false
 
 -- Função que determina nome e CFrame do monstro com base no nível
 local function getLevelData()
@@ -73,29 +72,31 @@ local function getClosestMonster(name)
 	return closest
 end
 
--- Loop contínuo com verificação
-RunService.RenderStepped:Connect(function()
-	if _G.AutoFarmLevel and not tweening then
-		local MonName, MonCframe = getLevelData()
-		if MonName and MonCframe then
-			local target = getClosestMonster(MonName)
-			if target then
-				tweening = true
+-- Loop mais leve usando task.spawn
+task.spawn(function()
+	while true do
+		if _G.AutoFarmLevel and not isRunning then
+			isRunning = true
 
-				local targetPos = target.HumanoidRootPart.Position
-				local teleportCFrame = CFrame.new(targetPos.X, MonCframe.Y, targetPos.Z)
+			local MonName, MonCframe = getLevelData()
+			if MonName and MonCframe then
+				local target = getClosestMonster(MonName)
+				if target then
+					local targetPos = target.HumanoidRootPart.Position
+					local teleportCFrame = CFrame.new(targetPos.X, MonCframe.Y, targetPos.Z)
 
-				local tween = TweenService:Create(hrp, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-					CFrame = teleportCFrame
-				})
-
-				tween:Play()
-				tween.Completed:Wait()
-
-				task.wait(0.1) -- Pequeno delay antes de permitir o próximo tween
-				tweening = false
+					local tween = TweenService:Create(hrp, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+						CFrame = teleportCFrame
+					})
+					tween:Play()
+					tween.Completed:Wait()
+				end
 			end
+
+			task.wait(0.3) -- Pequeno intervalo entre cada execução
+			isRunning = false
 		end
+		task.wait(0.1) -- Evita uso pesado da CPU
 	end
 end)
 
