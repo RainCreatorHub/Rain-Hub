@@ -6,15 +6,27 @@ local Window = RainLib:MakeWindow({
 })
 
 local MainTab = Window:MakeTab({ Name = "Main" })
-MainTab:AddSection({ Name = "Farm" })
+local section = MainTab:AddSection({ Name = "Farm" })
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local player = Players.LocalPlayer
-local hrp = player.Character or player.CharacterAdded:Wait()
-hrp = hrp:WaitForChild("HumanoidRootPart")
+local hrp -- Definido inicialmente como nil, será atualizado no CharacterAdded
+
+-- Função para atualizar o hrp quando o personagem mudar
+local function updateHRP(character)
+    hrp = character:WaitForChild("HumanoidRootPart")
+end
+
+-- Conectar o evento CharacterAdded para atualizar hrp
+player.CharacterAdded:Connect(updateHRP)
+
+-- Definir hrp inicial se o personagem já existir
+if player.Character then
+    updateHRP(player.Character)
+end
 
 _G.AutoFarmLevel = false
 _G.KillAura = false
@@ -75,6 +87,7 @@ end
 
 -- ⬇️ Retorna o mob mais próximo com o nome exato
 local function getClosestMonster(name)
+    if not hrp then return nil end -- Verifica se hrp existe
     local closest, dist = nil, math.huge
     for _, obj in pairs(workspace:GetChildren()) do
         if obj:IsA("Model") and obj.Name == name and obj:FindFirstChild("HumanoidRootPart") then
@@ -90,6 +103,7 @@ end
 
 -- ⬇️ Retorna a posição de fallback mais próxima (para OscarFish) ou a posição única
 local function getClosestFallback(name)
+    if not hrp then return nil end -- Verifica se hrp existe
     local positions = fallbackPositions[name]
     if not positions then
         return nil
@@ -116,7 +130,7 @@ end
 task.spawn(function()
     local tween
     while true do
-        if _G.AutoFarmLevel then
+        if _G.AutoFarmLevel and hrp then -- Verifica se hrp existe
             local name = getLevelData()
             local target = getClosestMonster(name)
 
@@ -144,7 +158,7 @@ end)
 -- ⬇️ Kill Aura Loop
 task.spawn(function()
     while true do
-        if _G.KillAura then
+        if _G.KillAura and hrp then -- Verifica se hrp existe
             local remote = ReplicatedStorage:FindFirstChild("M1PumpkinDeluxeEvent")
             if remote then
                 for _, mob in ipairs(workspace:GetChildren()) do
@@ -161,20 +175,20 @@ task.spawn(function()
 end)
 
 -- ⬇️ UI
-MainTab:AddToggle({
+local Toggle = MainTab:AddToggle({
     Name = "Auto Farm Level",
-    Description = "Farma level automaticamente",
+    Description = "Farma level automaticamente sem precisar ir manualmente.",
     Default = false,
     Callback = function(v)
         _G.AutoFarmLevel = v
     end
 })
 
-MainTab:AddSection({ Name = "Aura" })
+local section = MainTab:AddSection({ Name = "Aura" })
 
-MainTab:AddToggle({
+local Toggle = MainTab:AddToggle({
     Name = "Kill Aura",
-    Description = "Aura que mata quem estiver perto dela."
+    Description = "Aura que mata quem estiver perto dela.",
     Default = false,
     Callback = function(v)
         _G.KillAura = v
