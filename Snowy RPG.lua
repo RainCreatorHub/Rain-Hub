@@ -6,7 +6,7 @@ local Window = RainLib:MakeWindow({
 })
 
 local MainTab = Window:MakeTab({ Name = "Main" })
-local section = MainTab:AddSection({ Name = "Farm" })
+MainTab:AddSection({ Name = "Farm" })
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -161,18 +161,18 @@ task.spawn(function()
 end)
 
 -- ⬇️ UI
-local Toggle = MainTab:AddToggle({
+MainTab:AddToggle({
     Name = "Auto Farm Level",
-    Description = "Farma level automaticamente sem precisar ir manualmente.",
+    Description = "Farma level automaticamente",
     Default = false,
     Callback = function(v)
         _G.AutoFarmLevel = v
     end
 })
 
-local section = MainTab:AddSection({ Name = "Aura" })
+MainTab:AddSection({ Name = "Aura" })
 
-local Toggle = MainTab:AddToggle({
+MainTab:AddToggle({
     Name = "Kill Aura",
     Description = "Aura que mata quem estiver perto dela."
     Default = false,
