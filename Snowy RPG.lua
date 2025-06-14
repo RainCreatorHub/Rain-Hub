@@ -6,7 +6,7 @@ local Window = RainLib:MakeWindow({
 })
 
 local MainTab = Window:MakeTab({ Name = "Main" })
-MainTab:AddSection({ Name = "Farm" })
+local section = MainTab:AddSection({ Name = "Farm" })
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -19,123 +19,164 @@ hrp = hrp:WaitForChild("HumanoidRootPart")
 _G.AutoFarmLevel = false
 _G.KillAura = false
 
--- ⬇️ Fallback positions por nome do mob
+-- ⬇️ Fallback positions por nome do mob (na ordem do getLevelData, apenas OscarFish com 3 posições)
 local fallbackPositions = {
-	Frog = CFrame.new(-207, 70, -298),
-	BigFish = CFrame.new(-289, 21, -163),
-	SmallFish1 = CFrame.new(-255, 13, 931),
-	DarkHolder = CFrame.new(1841, 404, 1485),
-	OscarFish = CFrame.new(1077, -205, 907),
-	OscarFishBeta = CFrame.new(394, -275, 648),
-	WinterLoser = CFrame.new(2566, 411, 2677)
+    SmallFish1 = CFrame.new(-255, 13, 931),
+    BigFish = CFrame.new(-289, 21, -163),
+    SmallFish2 = CFrame.new(367, -234, -233),
+    StoneKid = CFrame.new(-59, 37, 239),
+    StoneTeen = CFrame.new(-59, 37, 239),
+    Frog = CFrame.new(-207, 70, -298),
+    OscarFishBeta = CFrame.new(394, -275, 648),
+    OscarFish = {
+        CFrame.new(985, 59, 907),
+        CFrame.new(1083, -228, 770),
+        CFrame.new(1003, -229, 970)
+    },
+    DarkHolder = CFrame.new(1841, 404, 1485),
+    WinterLoser = CFrame.new(2566, 411, 2677),
+    Ender = CFrame.new(4207, 632, 2822),
+    KnightLoser = CFrame.new(4675, 1025, 3886)
 }
 
--- ⬇️ Função que retorna nome do mob baseado no level
+-- ⬇️ Função que retorna nome do mob baseado no MyLevel
 local function getLevelData()
-	local level = player:WaitForChild("Data"):WaitForChild("Stats"):WaitForChild("Level").Value
-	local MonName
+    local MyLevel = player:WaitForChild("Data"):WaitForChild("Stats"):WaitForChild("Level").Value
+    local MonName
 
-	if level >= 0 and level <= 4 then
-		MonName = "SmallFish1"
-	elseif level >= 5 and level <= 21 then
-		MonName = "BigFish"
-	elseif level >= 22 and level <= 29 then
-		MonName = "SmallFish2"
-	elseif level >= 30 and level <= 33 then
-		MonName = "StoneKid"
-	elseif level >= 34 and level <= 36 then
-		MonName = "StoneTeen"
-	elseif level >= 37 and level <= 64 then
-		MonName = "Frog"
-	elseif level >= 65 and level <= 74 then
-		MonName = "OscarFishBeta"
-	elseif level >= 75 and level <= 133 then
-		MonName = "OscarFish"
-	elseif level >= 134 and level <= 149 then
-		MonName = "DarkHolder"
-	elseif level >= 150 then
-		MonName = "WinterLoser"
-	end
+    if MyLevel >= 0 and MyLevel <= 4 then
+        MonName = "SmallFish1"
+    elseif MyLevel >= 5 and MyLevel <= 21 then
+        MonName = "BigFish"
+    elseif MyLevel >= 22 and MyLevel <= 29 then
+        MonName = "SmallFish2"
+    elseif MyLevel >= 30 and MyLevel <= 33 then
+        MonName = "StoneKid"
+    elseif MyLevel >= 34 and MyLevel <= 36 then
+        MonName = "StoneTeen"
+    elseif MyLevel >= 37 and MyLevel <= 64 then
+        MonName = "Frog"
+    elseif MyLevel >= 65 and MyLevel <= 74 then
+        MonName = "OscarFishBeta"
+    elseif MyLevel >= 75 and MyLevel <= 178 then
+        MonName = "OscarFish"
+    elseif MyLevel >= 179 and MyLevel <= 199 then
+        MonName = "DarkHolder"
+    elseif MyLevel >= 200 and MyLevel <= 379 then
+        MonName = "WinterLoser"
+    elseif MyLevel >= 380 and MyLevel <= 514 then
+        MonName = "Ender"
+    elseif MyLevel >= 515 then
+        MonName = "KnightLoser"
+    end
 
-	return MonName
+    return MonName
 end
 
 -- ⬇️ Retorna o mob mais próximo com o nome exato
 local function getClosestMonster(name)
-	local closest, dist = nil, math.huge
-	for _, obj in pairs(workspace:GetChildren()) do
-		if obj:IsA("Model") and obj.Name == name and obj:FindFirstChild("HumanoidRootPart") then
-			local d = (hrp.Position - obj.HumanoidRootPart.Position).Magnitude
-			if d < dist then
-				dist = d
-				closest = obj
-			end
-		end
-	end
-	return closest
+    local closest, dist = nil, math.huge
+    for _, obj in pairs(workspace:GetChildren()) do
+        if obj:IsA("Model") and obj.Name == name and obj:FindFirstChild("HumanoidRootPart") then
+            local d = (hrp.Position - obj.HumanoidRootPart.Position).Magnitude
+            if d < dist then
+                dist = d
+                closest = obj
+            end
+        end
+    end
+    return closest
 end
 
--- ⬇️ Loop do AutoFarm com Tween 7 studs acima do monstro
-task.spawn(function()
-	local tween
-	while true do
-		if _G.AutoFarmLevel then
-			local name = getLevelData()
-			local target = getClosestMonster(name)
+-- ⬇️ Retorna a posição de fallback mais próxima (para OscarFish) ou a posição única
+local function getClosestFallback(name)
+    local positions = fallbackPositions[name]
+    if not positions then
+        return nil
+    end
 
-			if target and target:FindFirstChild("HumanoidRootPart") then
-				local pos = target.HumanoidRootPart.Position
-				local cf = CFrame.new(pos.X, pos.Y + 7, pos.Z)
-				if (hrp.Position - cf.Position).Magnitude > 4 then
-					if tween then tween:Cancel() end
-					tween = TweenService:Create(hrp, TweenInfo.new(0.4), {CFrame = cf})
-					tween:Play()
-				end
-			elseif fallbackPositions[name] then
-				local cf = fallbackPositions[name]
-				if tween then tween:Cancel() end
-				tween = TweenService:Create(hrp, TweenInfo.new(0.4), {CFrame = cf})
-				tween:Play()
-			end
-		end
-		task.wait(0.1)
-	end
+    -- Se for OscarFish, seleciona a posição mais próxima entre as 3
+    if name == "OscarFish" then
+        local closestPos, minDist = nil, math.huge
+        for _, cf in ipairs(positions) do
+            local d = (hrp.Position - cf.Position).Magnitude
+            if d < minDist then
+                minDist = d
+                closestPos = cf
+            end
+        end
+        return closestPos
+    end
+
+    -- Para outros mobs, retorna a posição única
+    return positions
+end
+
+-- ⬇️ Loop do AutoFarm com Tween 8 studs acima do monstro
+task.spawn(function()
+    local tween
+    while true do
+        if _G.AutoFarmLevel then
+            local name = getLevelData()
+            local target = getClosestMonster(name)
+
+            if target and target:FindFirstChild("HumanoidRootPart") then
+                local pos = target.HumanoidRootPart.Position
+                local cf = CFrame.new(pos.X, pos.Y + 8, pos.Z)
+                if (hrp.Position - cf.Position).Magnitude > 4 then
+                    if tween then tween:Cancel() end
+                    tween = TweenService:Create(hrp, TweenInfo.new(0.4), {CFrame = cf})
+                    tween:Play()
+                end
+            else
+                local cf = getClosestFallback(name)
+                if cf then
+                    if tween then tween:Cancel() end
+                    tween = TweenService:Create(hrp, TweenInfo.new(0.4), {CFrame = cf})
+                    tween:Play()
+                end
+            end
+        end
+        task.wait(0.1)
+    end
 end)
 
 -- ⬇️ Kill Aura Loop
 task.spawn(function()
-	while true do
-		if _G.KillAura then
-			local remote = ReplicatedStorage:FindFirstChild("M1PumpkinDeluxeEvent")
-			if remote then
-				for _, mob in ipairs(workspace:GetChildren()) do
-					if mob:IsA("Model") and mob:FindFirstChild("HumanoidRootPart") then
-						if (hrp.Position - mob.HumanoidRootPart.Position).Magnitude < 25 then
-							remote:FireServer()
-						end
-					end
-				end
-			end
-		end
-		task.wait(0.2)
-	end
+    while true do
+        if _G.KillAura then
+            local remote = ReplicatedStorage:FindFirstChild("M1PumpkinDeluxeEvent")
+            if remote then
+                for _, mob in ipairs(workspace:GetChildren()) do
+                    if mob:IsA("Model") and mob:FindFirstChild("HumanoidRootPart") then
+                        if (hrp.Position - mob.HumanoidRootPart.Position).Magnitude < 25 then
+                            remote:FireServer()
+                        end
+                    end
+                end
+            end
+        end
+        task.wait(0.2)
+    end
 end)
 
 -- ⬇️ UI
-MainTab:AddToggle({
-	Name = "Auto Farm Level",
-	Default = false,
-	Callback = function(v)
-		_G.AutoFarmLevel = v
-	end
+local Toggle = MainTab:AddToggle({
+    Name = "Auto Farm Level",
+    Description = "Farma level automaticamente sem precisar ir manualmente.",
+    Default = false,
+    Callback = function(v)
+        _G.AutoFarmLevel = v
+    end
 })
 
-MainTab:AddSection({ Name = "Aura" })
+local section = MainTab:AddSection({ Name = "Aura" })
 
-MainTab:AddToggle({
-	Name = "Kill Aura",
-	Default = false,
-	Callback = function(v)
-		_G.KillAura = v
-	end
+local Toggle = MainTab:AddToggle({
+    Name = "Kill Aura",
+    Description = "Aura que mata quem estiver perto dela."
+    Default = false,
+    Callback = function(v)
+        _G.KillAura = v
+    end
 })
