@@ -48,6 +48,7 @@ local fallbackPositions = {
     DarkHolder = CFrame.new(1841, 404, 1485),
     WinterLoser = CFrame.new(2566, 411, 2677),
     Ender = CFrame.new(4207, 632, 2822),
+    Minus = CFrame.new(5319, 671, 2417),
     KnightLoser = CFrame.new(4675, 1025, 3886)
 }
 
@@ -76,8 +77,10 @@ local function getLevelData()
         MonName = "DarkHolder"
     elseif MyLevel >= 200 and MyLevel <= 379 then
         MonName = "WinterLoser"
-    elseif MyLevel >= 380 and MyLevel <= 514 then
+    elseif MyLevel >= 380 and MyLevel <= 449 then
         MonName = "Ender"
+    elseif MyLevel >= 450 and MyLevel <= 514 then
+        MonName = "Minus"
     elseif MyLevel >= 515 then
         MonName = "KnightLoser"
     end
