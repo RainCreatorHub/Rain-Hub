@@ -82,20 +82,28 @@ local function getLevelData()
     local MonName, StudsY = nil, 8 -- Altura padrão de 8 studs
     if MyLevel >= 0 and MyLevel <= 4 then
         MonName = "SmallFish1"
+        StudsY = 5
     elseif MyLevel >= 5 and MyLevel <= 21 then
         MonName = "BigFish"
+        StudsY = 5
     elseif MyLevel >= 22 and MyLevel <= 29 then
         MonName = "SmallFish2"
+        StudsY = 6
     elseif MyLevel >= 30 and MyLevel <= 33 then
         MonName = "StoneKid"
+        StudsY = 2
     elseif MyLevel >= 34 and MyLevel <= 36 then
         MonName = "StoneTeen"
+        StudsY = 2
     elseif MyLevel >= 37 and MyLevel <= 64 then
         MonName = "Frog"
+        StudsY = 2
     elseif MyLevel >= 65 and MyLevel <= 74 then
         MonName = "OscarFishBeta"
+        StudsY = 3
     elseif MyLevel >= 75 and MyLevel <= 178 then
         MonName = "OscarFish"
+        StudsY = 3
     elseif MyLevel >= 179 and MyLevel <= 199 then
         MonName = "DarkHolder"
     elseif MyLevel >= 200 and MyLevel <= 379 then
@@ -283,7 +291,7 @@ local section = MainTab:AddSection({ Name = "Aura" })
 
 local Toggle = MainTab:AddToggle({
     Name = "Kill Aura",
-    Description = "Aura que mata Mon { Mob } que estiver perto dela.",
+    Description = "Aura que mata quem estiver perto dela.",
     Default = false,
     Callback = function(v)
         _G.KillAura = v
