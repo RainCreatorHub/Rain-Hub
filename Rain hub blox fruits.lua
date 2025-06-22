@@ -20,7 +20,6 @@ function CheckQuest()
 		CFrameQuest = CFrame.new(1059.37195, 15.4495068, 1550.4231)
 		CFrameMon = CFrame.new(1045.962646484375, 27.00250816345215, 1560.8203125)
 	end
-	-- (Outros níveis omitidos conforme pedido)
 end
 
 function HasActiveQuest()
