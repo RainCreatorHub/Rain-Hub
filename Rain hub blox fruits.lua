@@ -24,7 +24,6 @@ end
 
 function HasActiveQuest()
 	local player = Players.LocalPlayer
-	-- Exemplo: assumindo que existe player.Data.QuestActive como BoolValue
 	local questActiveValue = player:FindFirstChild("Data") and player.Data:FindFirstChild("QuestActive")
 	if questActiveValue and questActiveValue.Value == true then
 		return true
