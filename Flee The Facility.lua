@@ -1,5 +1,5 @@
-local OrionLibV2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/OrionLibV2/refs/heads/main/OrionLibV2.lua"))()
-local window = OrionLibV2:MakeWindow({
+local MoonLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/MoonLib/refs/heads/main/MoonLib.lua"))()
+local window = MoonLib:MakeWindow({
     Title = "Rain hub | Flee The Facility",
     SubTitle = "by zaque_blox"
 })
