@@ -1,7 +1,7 @@
-local OrionLibV2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/OrionLibV2/refs/heads/main/OrionLibV2.lua"))()
+local MoonLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/MoonLib/refs/heads/main/MoonLib.lua"))()
 
 -- Criação da janela principal
-local window = OrionLibV2:MakeWindow({
+local window = MoonLib:MakeWindow({
     Title = "Rain Hub | Forsaken",
     SubTitle = "By Zaque_blox"
 })
