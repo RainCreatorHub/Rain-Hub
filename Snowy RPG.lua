@@ -1,6 +1,6 @@
-local RainLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/OrionLibV2/refs/heads/main/OrionLibV2.lua"))()
+local MoonLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/RainCreatorHub/MoonLib/refs/heads/main/MoonLib.lua"))()
 
-local Window = RainLib:MakeWindow({
+local Window = MoonLib:MakeWindow({
     Title = "Rain hub | Snowy RPG",
     SubTitle = "by zaque_blox"
 })
