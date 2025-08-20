@@ -41,31 +41,22 @@ local function isValidModel(obj)
 end
 
 local InfoTab = window:Tab({ Title = "Info", Icon = "info" })
-local MainTab = window:Tab({ Title = "Main", Icon = "gamepad" })
-local EspTab = window:Tab({ Title = "ESP", Icon = "eye" })
-local ToolsTab = window:Tab({ Title = "Tools", Icon = "wrench" })
-local SettingsTab = window:Tab({ Title = "Settings", Icon = "settings" })
-
-window:SelectTab(1)
-
 local InfoSection = InfoTab:Section({ Title = "Info" })
 InfoTab:Paragraph({
     Title = "Bem vindo(a) " .. LocalPlayer.Name .. "!",
     Desc = "obrigado por usar o Rain hub :D"
 })
 
+local MainTab = window:Tab({ Title = "Main", Icon = "gamepad" })
 local SurvivorSection = MainTab:Section({ Title = "Survivor ( próximo update )" })
 local BeastSection = MainTab:Section({ Title = "Beast" })
 
 local function KillAll()
     local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
     if not remote then return end
-
     local character = LocalPlayer.Character
     if not character or not character:FindFirstChild("HumanoidRootPart") then return end
-
     local originalPosition = character.HumanoidRootPart.Position
-
     local closestPlayer, closestDistance = nil, math.huge
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
@@ -76,14 +67,11 @@ local function KillAll()
             end
         end
     end
-
     if not closestPlayer then return end
-
     character.HumanoidRootPart.CFrame = closestPlayer.Character.HumanoidRootPart.CFrame
     task.wait(0.1)
     remote:FireServer("Input", "Attack", true)
     task.wait(0.1)
-
     local nearestPod, nearestDistance = nil, math.huge
     for _, pod in ipairs(Workspace:GetDescendants()) do
         if pod.Name == "FreezePod" and pod:IsA("BasePart") then
@@ -107,17 +95,14 @@ local function KillAll()
             end
         end
     end
-
     if not nearestPod then
         character.HumanoidRootPart.Position = originalPosition
         return
     end
-
     character.HumanoidRootPart.CFrame = CFrame.new(nearestPod.Position)
     task.wait(0.1)
     remote:FireServer("Input", "Action", true)
     task.wait(0.1)
-
     character.HumanoidRootPart.Position = originalPosition
 end
 
@@ -133,12 +118,10 @@ local autoKillAllRunning = false
 local function AutoKillAllLoop()
     local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent", 5)
     if not remote then return end
-
     while _G.AutoKillAllCount > 0 do
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
             local originalPosition = character.HumanoidRootPart.Position
-
             local closestPlayer, closestDistance = nil, math.huge
             for _, plr in ipairs(Players:GetPlayers()) do
                 if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
@@ -149,13 +132,11 @@ local function AutoKillAllLoop()
                     end
                 end
             end
-
             if closestPlayer then
                 character.HumanoidRootPart.CFrame = closestPlayer.Character.HumanoidRootPart.CFrame
                 task.wait(0.1)
                 remote:FireServer("Input", "Attack", true)
                 task.wait(0.1)
-
                 local nearestPod, nearestDistance = nil, math.huge
                 for _, pod in ipairs(Workspace:GetDescendants()) do
                     if pod.Name == "FreezePod" and pod:IsA("BasePart") then
@@ -179,17 +160,14 @@ local function AutoKillAllLoop()
                         end
                     end
                 end
-
                 if nearestPod then
                     character.HumanoidRootPart.CFrame = CFrame.new(nearestPod.Position)
                     task.wait(0.1)
                     remote:FireServer("Input", "Action", true)
                     task.wait(0.1)
                 end
-
                 character.HumanoidRootPart.Position = originalPosition
             end
-
             task.wait(0.5)
         else
             task.wait(1)
@@ -201,7 +179,6 @@ local function ToggleAutoKillAll(val)
     _G.AutoKillAllCount += val and 1 or -1
     _G.AutoKillAllCount = math.max(0, _G.AutoKillAllCount)
     _G.AutoKillAllEvent:Fire(_G.AutoKillAllCount > 0)
-
     if _G.AutoKillAllCount > 0 and not autoKillAllRunning then
         autoKillAllRunning = true
         task.spawn(AutoKillAllLoop)
@@ -216,13 +193,13 @@ local toggleAutoKillAll = MainTab:Toggle({
     Default = false,
     Callback = ToggleAutoKillAll
 })
-
 _G.AutoKillAllEvent.Event:Connect(function(state)
     if toggleAutoKillAll:Get() ~= state then
         toggleAutoKillAll:Set(state)
     end
 end)
 
+local EspTab = window:Tab({ Title = "ESP", Icon = "eye" })
 local EspSection = EspTab:Section({ Title = "esp" })
 
 _G.ComputersEspEvent = _G.ComputersEspEvent or Instance.new("BindableEvent")
@@ -245,7 +222,6 @@ local function UpdateComputerHighlights()
                     computerHighlights[obj] = hl
                 end
             end
-
             local screen = obj:FindFirstChild("Screen")
             if screen and computerHighlights[obj] then
                 local hl = computerHighlights[obj]
@@ -254,7 +230,6 @@ local function UpdateComputerHighlights()
             end
         end
     end
-
     for obj, hl in pairs(computerHighlights) do
         if not obj:IsDescendantOf(Workspace) then
             hl:Destroy()
@@ -268,7 +243,6 @@ local function ToggleComputersESP(val)
     _G.ComputersEspCount += val and 1 or -1
     _G.ComputersEspCount = math.max(0, _G.ComputersEspCount)
     _G.ComputersEspEvent:Fire(_G.ComputersEspCount > 0)
-
     if _G.ComputersEspCount > 0 and not computersRunning then
         computersRunning = true
         task.spawn(function()
@@ -314,7 +288,6 @@ local function UpdateFreezerHighlights()
                 hl.Parent = pod
                 freezerHighlights[pod] = hl
             end
-
             local occupied = false
             for _, plr in ipairs(Players:GetPlayers()) do
                 if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
@@ -325,7 +298,6 @@ local function UpdateFreezerHighlights()
                     end
                 end
             end
-
             local hl = freezerHighlights[pod]
             if occupied then
                 hl.FillColor = Color3.fromRGB(255, 0, 0)
@@ -336,7 +308,6 @@ local function UpdateFreezerHighlights()
             end
         end
     end
-
     for pod, hl in pairs(freezerHighlights) do
         if not pod:IsDescendantOf(Workspace) then
             hl:Destroy()
@@ -350,7 +321,6 @@ local function ToggleFreezerESP(val)
     _G.FreezerEspCount += val and 1 or -1
     _G.FreezerEspCount = math.max(0, _G.FreezerEspCount)
     _G.FreezerEspEvent:Fire(_G.FreezerEspCount > 0)
-
     if _G.FreezerEspCount > 0 and not freezerRunning then
         freezerRunning = true
         task.spawn(function()
@@ -400,7 +370,6 @@ local function UpdateExitHighlights()
             end
         end
     end
-
     for door, hl in pairs(exitHighlights) do
         if not door:IsDescendantOf(Workspace) then
             hl:Destroy()
@@ -414,7 +383,6 @@ local function ToggleExitESP(val)
     _G.ExitEspCount += val and 1 or -1
     _G.ExitEspCount = math.max(0, _G.ExitEspCount)
     _G.ExitEspEvent:Fire(_G.ExitEspCount > 0)
-
     if _G.ExitEspCount > 0 and not exitRunning then
         exitRunning = true
         task.spawn(function()
@@ -469,7 +437,6 @@ local function UpdatePlayerHighlights()
                 else
                     playerHighlights[plr].Adornee = char
                 end
-
                 local color = HasHammer(plr) and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
                 local hl = playerHighlights[plr]
                 hl.FillColor = color
@@ -477,7 +444,6 @@ local function UpdatePlayerHighlights()
             end
         end
     end
-
     for plr, hl in pairs(playerHighlights) do
         if not Players:FindFirstChild(plr.Name) or not Workspace:FindFirstChild(plr.Name) then
             hl:Destroy()
@@ -491,7 +457,6 @@ local function TogglePlayersESP(val)
     _G.PlayersEspCount += val and 1 or -1
     _G.PlayersEspCount = math.max(0, _G.PlayersEspCount)
     _G.PlayersEspEvent:Fire(_G.PlayersEspCount > 0)
-
     if _G.PlayersEspCount > 0 and not playerEspRunning then
         playerEspRunning = true
         task.spawn(function()
@@ -520,6 +485,7 @@ _G.PlayersEspEvent.Event:Connect(function(state)
     end
 end)
 
+local ToolsTab = window:Tab({ Title = "Tools", Icon = "wrench" })
 local ToolsSurvivorSection = ToolsTab:Section({ Title = "survivor" })
 
 _G.AntiFailEvent = _G.AntiFailEvent or Instance.new("BindableEvent")
@@ -540,7 +506,6 @@ local function ToggleAntiFail(val)
     _G.AntiFailCount += val and 1 or -1
     _G.AntiFailCount = math.max(0, _G.AntiFailCount)
     _G.AntiFailEvent:Fire(_G.AntiFailCount > 0)
-
     if _G.AntiFailCount > 0 and not antiFailRunning then
         antiFailRunning = true
         task.spawn(NoFailLoop)
@@ -555,7 +520,6 @@ local toggleAntiFail = ToolsTab:Toggle({
     Default = false,
     Callback = ToggleAntiFail
 })
-
 _G.AntiFailEvent.Event:Connect(function(state)
     if toggleAntiFail:Get() ~= state then
         toggleAntiFail:Set(state)
@@ -580,7 +544,6 @@ local function ToggleAutoInteract(val)
     _G.AutoInteractCount += val and 1 or -1
     _G.AutoInteractCount = math.max(0, _G.AutoInteractCount)
     _G.AutoInteractEvent:Fire(_G.AutoInteractCount > 0)
-
     if _G.AutoInteractCount > 0 and not autoInteractRunning then
         autoInteractRunning = true
         task.spawn(AutoInteractLoop)
@@ -595,11 +558,13 @@ local toggleAutoInteract = ToolsTab:Toggle({
     Default = false,
     Callback = ToggleAutoInteract
 })
-
 _G.AutoInteractEvent.Event:Connect(function(state)
     if toggleAutoInteract:Get() ~= state then
         toggleAutoInteract:Set(state)
     end
 end)
 
+local SettingsTab = window:Tab({ Title = "Settings", Icon = "settings" })
 local SettingsSection = SettingsTab:Section({ Title = "Próximo Update" })
+
+window:SelectTab(1)
