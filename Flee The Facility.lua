@@ -564,6 +564,9 @@ _G.AutoInteractEvent.Event:Connect(function(state)
     end
 end)
 
+local ScriptTab = window:Tab({ Title = "Script", Icon = "list" })
+local ScriptsSection1 = ScriptTab:Section({ Title = "script { Universal }" })
+
 local SettingsTab = window:Tab({ Title = "Settings", Icon = "settings" })
 local SettingsSection = SettingsTab:Section({ Title = "Próximo Update" })
 
