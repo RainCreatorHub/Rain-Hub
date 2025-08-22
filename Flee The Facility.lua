@@ -21,7 +21,7 @@ local window = WindUI:CreateWindow({
         end,
     },
     KeySystem = {
-        Key = { "Rain()Hub" },
+        Key = { "Rain()Hub", "@no.o.foxyy3", "Não é o foxyy" },
         Note = "Obrigado por usar o Rain hub :D",
         Thumbnail = {
             Image = "rbxassetid://",
