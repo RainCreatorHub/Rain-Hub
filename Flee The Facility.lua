@@ -47,7 +47,7 @@ InfoTab:Paragraph({
     Desc = "obrigado por usar o Rain hub :D"
 })
 
-local WindowS1 = Window:Section({ Title = "Game", Icon = "gamepad", IconThemed = true })
+local WindowS1 = Window:Section({ Title = "Game", Icon = "control", IconThemed = true })
 
 local MainTab = WindowS1:Tab({ Title = "Main", Icon = "gamepad" })
 local SurvivorSection = MainTab:Section({ Title = "Survivor ( próximo update )" })
@@ -278,7 +278,7 @@ local toggleFreezer = EspTab:Toggle({
     Title = "Freezer",
     Desc = "Destaca os pods de congelamento em ciano { No function }",
     Icon = "Rocket",
-    Type = "Checkbox",
+    Type = "toggle",
     Default = false,
     Callback = function(V)
         _G.Esp_Freezer = V
