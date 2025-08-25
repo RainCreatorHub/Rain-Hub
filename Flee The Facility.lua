@@ -49,7 +49,7 @@ InfoTab:Paragraph({
 
 local WindowS1 = Window:Section({ Title = "Game", Icon = "gamepad", IconThemed = true })
 
-local MainTab = window:Tab({ Title = "Main", Icon = "gamepad" })
+local MainTab = WindowS1:Tab({ Title = "Main", Icon = "gamepad" })
 local SurvivorSection = MainTab:Section({ Title = "Survivor ( próximo update )" })
 local BeastSection = MainTab:Section({ Title = "Beast" })
 
@@ -278,7 +278,7 @@ local toggleFreezer = EspTab:Toggle({
     Title = "Freezer",
     Desc = "Destaca os pods de congelamento em ciano { No function }",
     Icon = "Rocket",
-    Type = "Switche" or "Checkbox",
+    Type = "Checkbox",
     Default = false,
     Callback = function(V)
         _G.Esp_Freezer = V
