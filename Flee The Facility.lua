@@ -47,6 +47,8 @@ InfoTab:Paragraph({
     Desc = "obrigado por usar o Rain hub :D"
 })
 
+local WindowS1 = Window:Section({ Title = "Game" })
+
 local MainTab = window:Tab({ Title = "Main", Icon = "gamepad" })
 local SurvivorSection = MainTab:Section({ Title = "Survivor ( próximo update )" })
 local BeastSection = MainTab:Section({ Title = "Beast" })
@@ -107,7 +109,7 @@ local function KillAll()
 end
 
 MainTab:Button({
-    Title = "Kill all ( beta ) - ( bug ) - incompleto )",
+    Title = "Kill all ( beta ) - ( bug ) - ( incompleto )",
     Callback = KillAll
 })
 
@@ -188,7 +190,7 @@ local function ToggleAutoKillAll(val)
 end
 
 local toggleAutoKillAll = MainTab:Toggle({
-    Title = "Auto Kill all ( beta ) - ( bug ) - incompleto )",
+    Title = "Auto Kill all ( beta ) - ( bug ) - ( incompleto )",
     Desc = "mate todos se for a besta",
     Default = false,
     Callback = ToggleAutoKillAll
@@ -199,8 +201,8 @@ _G.AutoKillAllEvent.Event:Connect(function(state)
     end
 end)
 
-local EspTab = window:Tab({ Title = "ESP", Icon = "eye" })
-local EspSection = EspTab:Section({ Title = "esp" })
+local EspTab = window:Tab({ Title = "esp", Icon = "eye" })
+local EspSection = EspTab:Section({ Title = "esp { Normal { Higlight } { Não sei se é assim que fala} }" })
 
 _G.ComputersEspEvent = _G.ComputersEspEvent or Instance.new("BindableEvent")
 _G.ComputersEspCount = _G.ComputersEspCount or 0
@@ -271,83 +273,105 @@ _G.ComputersEspEvent.Event:Connect(function(state)
     end
 end)
 
+_G.Esp_Freezer = _G.Esp_Freezer or false
 _G.FreezerEspEvent = _G.FreezerEspEvent or Instance.new("BindableEvent")
-_G.FreezerEspCount = _G.FreezerEspCount or 0
 local freezerHighlights = {}
+local connections = {}
 
-local function UpdateFreezerHighlights()
-    for _, pod in ipairs(Workspace:GetDescendants()) do
-        if pod.Name == "FreezePod" and pod:IsA("BasePart") then
-            if not freezerHighlights[pod] then
-                local hl = Instance.new("Highlight")
-                hl.Name = "FreezerESP"
-                hl.Adornee = pod
-                hl.FillTransparency = 0.5
-                hl.OutlineTransparency = 0
-                hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                hl.Parent = pod
-                freezerHighlights[pod] = hl
-            end
-            local occupied = false
-            for _, plr in ipairs(Players:GetPlayers()) do
-                if plr ~= LocalPlayer and plr.Character and isValidModel(plr.Character) then
-                    local dist = (pod.Position - plr.Character.HumanoidRootPart.Position).Magnitude
-                    if dist < 5 then
-                        occupied = true
-                        break
-                    end
-                end
-            end
-            local hl = freezerHighlights[pod]
-            if occupied then
-                hl.FillColor = Color3.fromRGB(255, 0, 0)
-                hl.OutlineColor = Color3.fromRGB(255, 0, 0)
-            else
-                hl.FillColor = Color3.fromRGB(0, 255, 0)
-                hl.OutlineColor = Color3.fromRGB(0, 255, 0)
+local function addHighlight(pod)
+    if not freezerHighlights[pod] then
+        local hl = Instance.new("Highlight")
+        hl.Name = "FreezerESP"
+        hl.Adornee = pod
+        hl.FillTransparency = 0.5
+        hl.OutlineTransparency = 0
+        hl.FillColor = Color3.fromRGB(0, 255, 255)
+        hl.OutlineColor = Color3.fromRGB(0, 255, 255)
+        hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        hl.Parent = pod
+        freezerHighlights[pod] = hl
+    end
+end
+
+local function removeHighlight(pod)
+    local hl = freezerHighlights[pod]
+    if hl then
+        hl:Destroy()
+        freezerHighlights[pod] = nil
+    end
+end
+
+local function updateAllFreezerPods()
+    if _G.Esp_Freezer then
+        for _, pod in ipairs(Workspace:GetDescendants()) do
+            if pod.Name == "FreezePod" and pod:IsA("BasePart") then
+                addHighlight(pod)
             end
         end
-    end
-    for pod, hl in pairs(freezerHighlights) do
-        if not pod:IsDescendantOf(Workspace) then
+    else
+        for pod, hl in pairs(freezerHighlights) do
             hl:Destroy()
             freezerHighlights[pod] = nil
         end
     end
 end
 
-local freezerRunning = false
 local function ToggleFreezerESP(val)
-    _G.FreezerEspCount += val and 1 or -1
-    _G.FreezerEspCount = math.max(0, _G.FreezerEspCount)
-    _G.FreezerEspEvent:Fire(_G.FreezerEspCount > 0)
-    if _G.FreezerEspCount > 0 and not freezerRunning then
-        freezerRunning = true
-        task.spawn(function()
-            while _G.FreezerEspCount > 0 do
-                UpdateFreezerHighlights()
-                task.wait(0.5)
-            end
-            for _, hl in pairs(freezerHighlights) do
-                hl:Destroy()
-            end
-            table.clear(freezerHighlights)
-            freezerRunning = false
-        end)
+    _G.Esp_Freezer = val
+    _G.FreezerEspEvent:Fire(val)
+    if _G.Esp_Freezer then
+        updateAllFreezerPods()
+        if not connections.DescendantAdded then
+            connections.DescendantAdded = Workspace.DescendantAdded:Connect(function(descendant)
+                if _G.Esp_Freezer and descendant.Name == "FreezePod" and descendant:IsA("BasePart") then
+                    addHighlight(descendant)
+                end
+            end)
+        end
+        if not connections.DescendantRemoving then
+            connections.DescendantRemoving = Workspace.DescendantRemoving:Connect(function(descendant)
+                if descendant.Name == "FreezePod" then
+                    removeHighlight(descendant)
+                end
+            end)
+        end
+    else
+        updateAllFreezerPods()
     end
 end
 
 local toggleFreezer = EspTab:Toggle({
     Title = "Freezer",
-    Desc = "destaca os pods de congelamento",
-    Default = false,
+    Desc = "Destaca os pods de congelamento em ciano",
+    Default = _G.Esp_Freezer,
     Callback = ToggleFreezerESP
 })
-_G.FreezerEspEvent.Event:Connect(function(state)
-    if toggleFreezer:Get() ~= state then
-        toggleFreezer:Set(state)
+
+if not connections.FreezerEspEvent then
+    connections.FreezerEspEvent = _G.FreezerEspEvent.Event:Connect(function(state)
+        if toggleFreezer:Get() ~= state then
+            toggleFreezer:Set(state)
+        end
+    end)
+end
+
+local function cleanup()
+    for _, connection in pairs(connections) do
+        connection:Disconnect()
     end
-end)
+    for _, hl in pairs(freezerHighlights) do
+        hl:Destroy()
+    end
+    table.clear(freezerHighlights)
+    table.clear(connections)
+end
+
+game:BindToClose(cleanup)
+LocalPlayer.AncestorRemoving:Connect(cleanup)
+
+if _G.Esp_Freezer then
+    ToggleFreezerESP(true)
+end
 
 _G.ExitEspEvent = _G.ExitEspEvent or Instance.new("BindableEvent")
 _G.ExitEspCount = _G.ExitEspCount or 0
