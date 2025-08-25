@@ -47,7 +47,7 @@ InfoTab:Paragraph({
     Desc = "obrigado por usar o Rain hub :D"
 })
 
-local WindowS1 = Window:Section({ Title = "Game", Icon = "gamepad" })
+local WindowS1 = Window:Section({ Title = "Game", Icon = "gamepad", IconThemed = true })
 
 local MainTab = window:Tab({ Title = "Main", Icon = "gamepad" })
 local SurvivorSection = MainTab:Section({ Title = "Survivor ( próximo update )" })
@@ -505,7 +505,7 @@ _G.AutoInteractEvent.Event:Connect(function(state)
     end
 end)
 
-local ScriptTab = window:Tab({ Title = "Script", Icon = "list" })
+local ScriptTab = window:Tab({ Title = "Script", Icon = "list", IconThemed = true })
 local ScriptsSection1 = ScriptTab:Section({ Title = "script { Universal }" })
 
 local SettingsTab = window:Tab({ Title = "Settings", Icon = "settings" })
